@@ -1,0 +1,1 @@
+#include "SharedMemoryLock.h"

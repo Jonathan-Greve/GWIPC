@@ -1,0 +1,9 @@
+namespace GWIPC;
+
+table Connections {
+  connected_ids:[string];
+  // When a client connects in GW they add themselves to this list.
+  // They remove themselves when they disconnect.
+}
+
+root_type Connections;
