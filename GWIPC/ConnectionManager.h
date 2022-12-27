@@ -7,7 +7,7 @@
 namespace GWIPC {
 	class ConnectionManager {
 	public:
-		ConnectionManager(const std::string& connection_id) : shared_memory_(SharedMemory(sm_name_, sm_size_)),
+		ConnectionManager(const std::string& connection_id) : shared_memory_("connections", 1024),
 			connection_id_(connection_id)
 		{
 			// Create or open the event. This will be used to notify other processes and a client connect or disconnect.
@@ -68,11 +68,9 @@ namespace GWIPC {
 		}
 
 	private:
-		std::string connection_id_;
+		std::string connection_id_ = "not set";
 
 		SharedMemory shared_memory_;
-		const std::string sm_name_ = "connections";
-		const uint32_t sm_size_ = 1024;
 
 		HANDLE event_;
 		const std::string event_name_ = "connections_event";
