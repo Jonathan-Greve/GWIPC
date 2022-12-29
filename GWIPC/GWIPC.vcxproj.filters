@@ -46,9 +46,15 @@
       <Filter>Generated flatbuffer files</Filter>
     </ClInclude>
     <ClInclude Include="GWIPC.h" />
+    <ClInclude Include="clientData_generated.h">
+      <Filter>Generated flatbuffer files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="connections.fbs">
+      <Filter>Flatbuffer schemes</Filter>
+    </None>
+    <None Include="clientData.fbs">
       <Filter>Flatbuffer schemes</Filter>
     </None>
   </ItemGroup>

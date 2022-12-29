@@ -1,0 +1,89 @@
+namespace GWIPC;
+
+struct Vec2 {
+  x:float;
+  y:float;
+}
+
+struct Vec3 {
+  x:float;
+  y:float;
+  z:float;
+}
+
+enum TeamColor : byte { None = 0, Blue = 1, Red = 2, Yellow = 3 }
+enum Profession : byte { 
+  None = 0, 
+  Warrior = 1, 
+  Ranger = 2,
+  Monk = 3,
+  Necromancer = 4,
+  Mesmer = 5,
+  Elementalist = 6,
+  Assassin = 7,
+  Ritualist = 8,
+  Paragon = 9,
+  Dervish = 10
+}
+
+
+
+struct Agent {
+  agent_id:uint32;
+
+  position:Vec3;
+  terrain_normal:Vec3;
+  rotation:float;
+  velocity:Vec2;
+
+  model_width:float;
+  model_height:float;
+
+  instance_timer:uint32;
+}
+
+table AgentLiving {
+  agent:Agent;
+  name:string;
+  
+  owner_agent_id:uint32;
+
+  animation_type:float;
+
+  weapon_attack_speed:float;
+  weapon_attack_speed_modifier:float;
+
+  player_number:uint32;
+
+  primary_profession:Profession;
+  secondary_profession:Profession;
+  
+  team_color:TeamColor;
+
+  guild_id:uint16;
+
+  level:uint8;
+
+  health:float;
+  max_health:float;
+  health_recharge:float;
+  energy:float;
+  max_energy:float;
+  energy_recharge:float;
+}
+
+table Character {
+  agent_living:AgentLiving;
+}
+
+table Instance {
+  instance_id:uint32;
+  map_id:uint32;
+}
+
+table ClientData {
+    character:Character;
+    instance:Instance;
+}
+
+root_type ClientData;

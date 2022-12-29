@@ -82,6 +82,9 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PreBuildEvent>
+      <Command>.\flatc.exe --cpp clientData.fbs connections.fbs</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -99,6 +102,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PreBuildEvent>
+      <Command>.\flatc.exe --cpp clientData.fbs connections.fbs</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -137,6 +143,7 @@
     <ClCompile Include="SharedMemoryLock.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="clientData_generated.h" />
     <ClInclude Include="ConnectionManager.h" />
     <ClInclude Include="connections_generated.h" />
     <ClInclude Include="GWIPC.h" />
@@ -144,6 +151,7 @@
     <ClInclude Include="SharedMemoryLock.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="clientData.fbs" />
     <None Include="connections.fbs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

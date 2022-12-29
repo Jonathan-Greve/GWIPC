@@ -5,3 +5,4 @@
 
 // Generated flatbuffer files
 #include "connections_generated.h"
+#include "clientData_generated.h"
