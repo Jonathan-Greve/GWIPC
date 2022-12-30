@@ -5,6 +5,11 @@
 
 namespace GWIPC
 {
+struct DataInfo
+{
+    uint32_t data_size;
+};
+
 class SharedMemory
 {
 public:
@@ -42,9 +47,18 @@ public:
         CloseHandle(mutex_);
     }
 
+    void write_data(uint8_t* new_data, uint32_t new_data_size)
+    {
+        DataInfo data_info(new_data_size);
+        WaitForSingleObject(mutex_, INFINITE);
+        std::memcpy(data_, &data_info, sizeof(DataInfo));
+        std::memcpy((uint8_t*)data_ + sizeof(DataInfo), new_data, new_data_size);
+        ReleaseMutex(mutex_);
+    }
+
     // Returns a pointer to the shared memory.
-    // Returns a pointer to the shared memory.
-    void* data() const { return data_; }
+    DataInfo* get_data_info() const { return static_cast<DataInfo*>(data_); }
+    uint8_t* get_data() const { return static_cast<uint8_t*>(data_) + sizeof(DataInfo); }
 
     // Locks the shared memory for reading or writing.
     // Locks the shared memory for reading or writing.

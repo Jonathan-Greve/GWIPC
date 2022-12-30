@@ -59,7 +59,7 @@ public:
     {
         std::vector<std::string> result;
 
-        uint8_t* sm_data = static_cast<uint8_t*>(shared_memory_.data());
+        auto sm_data = shared_memory_.get_data();
         if (sm_data)
         {
             auto connections = GWIPC::GetConnections(sm_data);
@@ -108,8 +108,7 @@ private:
         // Copy and overwrite shared memory.
         uint8_t* buf = builder.GetBufferPointer();
         int size = builder.GetSize();
-        uint8_t* data = static_cast<uint8_t*>(shared_memory_.data());
-        memcpy(data, buf, size);
+        shared_memory_.write_data(buf, size);
     }
 
     void create_event()
