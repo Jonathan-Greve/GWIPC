@@ -35,9 +35,7 @@ public:
         }
     }
 
-    // Destroys the shared memory object.
-    // Destroys the shared memory object.
-    ~SharedMemory()
+    void terminate()
     {
         UnmapViewOfFile(data_);
         CloseHandle(mapping_);

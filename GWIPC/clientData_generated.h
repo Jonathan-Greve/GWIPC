@@ -27,6 +27,9 @@ struct AgentLivingBuilder;
 struct Character;
 struct CharacterBuilder;
 
+struct Party;
+struct PartyBuilder;
+
 struct Instance;
 struct InstanceBuilder;
 
@@ -534,6 +537,57 @@ inline flatbuffers::Offset<Character> CreateCharacter(
   return builder_.Finish();
 }
 
+struct Party FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef PartyBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_PARTY_ID = 4,
+    VT_LEADER_AGENT_ID = 6
+  };
+  uint32_t party_id() const {
+    return GetField<uint32_t>(VT_PARTY_ID, 0);
+  }
+  uint32_t leader_agent_id() const {
+    return GetField<uint32_t>(VT_LEADER_AGENT_ID, 0);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_PARTY_ID, 4) &&
+           VerifyField<uint32_t>(verifier, VT_LEADER_AGENT_ID, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct PartyBuilder {
+  typedef Party Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_party_id(uint32_t party_id) {
+    fbb_.AddElement<uint32_t>(Party::VT_PARTY_ID, party_id, 0);
+  }
+  void add_leader_agent_id(uint32_t leader_agent_id) {
+    fbb_.AddElement<uint32_t>(Party::VT_LEADER_AGENT_ID, leader_agent_id, 0);
+  }
+  explicit PartyBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  flatbuffers::Offset<Party> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<Party>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<Party> CreateParty(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t party_id = 0,
+    uint32_t leader_agent_id = 0) {
+  PartyBuilder builder_(_fbb);
+  builder_.add_leader_agent_id(leader_agent_id);
+  builder_.add_party_id(party_id);
+  return builder_.Finish();
+}
+
 struct Instance FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef InstanceBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -589,7 +643,8 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef ClientDataBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_CHARACTER = 4,
-    VT_INSTANCE = 6
+    VT_INSTANCE = 6,
+    VT_PARTY = 8
   };
   const GWIPC::Character *character() const {
     return GetPointer<const GWIPC::Character *>(VT_CHARACTER);
@@ -597,12 +652,17 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const GWIPC::Instance *instance() const {
     return GetPointer<const GWIPC::Instance *>(VT_INSTANCE);
   }
+  const GWIPC::Party *party() const {
+    return GetPointer<const GWIPC::Party *>(VT_PARTY);
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyOffset(verifier, VT_CHARACTER) &&
            verifier.VerifyTable(character()) &&
            VerifyOffset(verifier, VT_INSTANCE) &&
            verifier.VerifyTable(instance()) &&
+           VerifyOffset(verifier, VT_PARTY) &&
+           verifier.VerifyTable(party()) &&
            verifier.EndTable();
   }
 };
@@ -616,6 +676,9 @@ struct ClientDataBuilder {
   }
   void add_instance(flatbuffers::Offset<GWIPC::Instance> instance) {
     fbb_.AddOffset(ClientData::VT_INSTANCE, instance);
+  }
+  void add_party(flatbuffers::Offset<GWIPC::Party> party) {
+    fbb_.AddOffset(ClientData::VT_PARTY, party);
   }
   explicit ClientDataBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -631,8 +694,10 @@ struct ClientDataBuilder {
 inline flatbuffers::Offset<ClientData> CreateClientData(
     flatbuffers::FlatBufferBuilder &_fbb,
     flatbuffers::Offset<GWIPC::Character> character = 0,
-    flatbuffers::Offset<GWIPC::Instance> instance = 0) {
+    flatbuffers::Offset<GWIPC::Instance> instance = 0,
+    flatbuffers::Offset<GWIPC::Party> party = 0) {
   ClientDataBuilder builder_(_fbb);
+  builder_.add_party(party);
   builder_.add_instance(instance);
   builder_.add_character(character);
   return builder_.Finish();

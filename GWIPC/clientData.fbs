@@ -76,6 +76,11 @@ table Character {
   agent_living:AgentLiving;
 }
 
+table Party {
+  party_id:uint32;
+  leader_agent_id:uint32;
+}
+
 table Instance {
   instance_id:uint32;
   map_id:uint32;
@@ -84,6 +89,7 @@ table Instance {
 table ClientData {
     character:Character;
     instance:Instance;
+    party:Party;
 }
 
 root_type ClientData;
