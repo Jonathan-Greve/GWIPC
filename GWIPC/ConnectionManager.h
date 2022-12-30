@@ -80,6 +80,12 @@ public:
         return result;
     }
 
+    void terminate()
+    {
+        shared_memory_.terminate();
+        CloseHandle(event_);
+    }
+
     HANDLE get_event_handle() { return event_; }
     HANDLE get_mutex_handle() { return shared_memory_.get_mutex_handle(); }
 
