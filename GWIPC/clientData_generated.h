@@ -36,6 +36,42 @@ struct InstanceBuilder;
 struct ClientData;
 struct ClientDataBuilder;
 
+enum GameState : int8_t {
+  GameState_Unknown = 0,
+  GameState_Loading = 1,
+  GameState_CharSelect = 2,
+  GameState_InGame = 3,
+  GameState_MIN = GameState_Unknown,
+  GameState_MAX = GameState_InGame
+};
+
+inline const GameState (&EnumValuesGameState())[4] {
+  static const GameState values[] = {
+    GameState_Unknown,
+    GameState_Loading,
+    GameState_CharSelect,
+    GameState_InGame
+  };
+  return values;
+}
+
+inline const char * const *EnumNamesGameState() {
+  static const char * const names[5] = {
+    "Unknown",
+    "Loading",
+    "CharSelect",
+    "InGame",
+    nullptr
+  };
+  return names;
+}
+
+inline const char *EnumNameGameState(GameState e) {
+  if (flatbuffers::IsOutRange(e, GameState_Unknown, GameState_InGame)) return "";
+  const size_t index = static_cast<size_t>(e);
+  return EnumNamesGameState()[index];
+}
+
 enum TeamColor : int8_t {
   TeamColor_None = 0,
   TeamColor_Blue = 1,
@@ -634,7 +670,8 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_CHARACTER = 4,
     VT_INSTANCE = 6,
-    VT_PARTY = 8
+    VT_PARTY = 8,
+    VT_GAME_STATE = 10
   };
   const GWIPC::Character *character() const {
     return GetPointer<const GWIPC::Character *>(VT_CHARACTER);
@@ -645,6 +682,9 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const GWIPC::Party *party() const {
     return GetPointer<const GWIPC::Party *>(VT_PARTY);
   }
+  GWIPC::GameState game_state() const {
+    return static_cast<GWIPC::GameState>(GetField<int8_t>(VT_GAME_STATE, 0));
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyOffset(verifier, VT_CHARACTER) &&
@@ -653,6 +693,7 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            verifier.VerifyTable(instance()) &&
            VerifyOffset(verifier, VT_PARTY) &&
            verifier.VerifyTable(party()) &&
+           VerifyField<int8_t>(verifier, VT_GAME_STATE, 1) &&
            verifier.EndTable();
   }
 };
@@ -670,6 +711,9 @@ struct ClientDataBuilder {
   void add_party(flatbuffers::Offset<GWIPC::Party> party) {
     fbb_.AddOffset(ClientData::VT_PARTY, party);
   }
+  void add_game_state(GWIPC::GameState game_state) {
+    fbb_.AddElement<int8_t>(ClientData::VT_GAME_STATE, static_cast<int8_t>(game_state), 0);
+  }
   explicit ClientDataBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -685,11 +729,13 @@ inline flatbuffers::Offset<ClientData> CreateClientData(
     flatbuffers::FlatBufferBuilder &_fbb,
     flatbuffers::Offset<GWIPC::Character> character = 0,
     flatbuffers::Offset<GWIPC::Instance> instance = 0,
-    flatbuffers::Offset<GWIPC::Party> party = 0) {
+    flatbuffers::Offset<GWIPC::Party> party = 0,
+    GWIPC::GameState game_state = GWIPC::GameState_Unknown) {
   ClientDataBuilder builder_(_fbb);
   builder_.add_party(party);
   builder_.add_instance(instance);
   builder_.add_character(character);
+  builder_.add_game_state(game_state);
   return builder_.Finish();
 }
 
