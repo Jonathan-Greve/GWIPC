@@ -53,7 +53,7 @@ table AgentLiving {
   weapon_attack_speed:float;
   weapon_attack_speed_modifier:float;
 
-  player_number:uint32;
+  player_number:uint16;
 
   primary_profession:Profession;
   secondary_profession:Profession;
@@ -65,10 +65,10 @@ table AgentLiving {
   level:uint8;
 
   health:float;
-  max_health:float;
+  max_health:uint32;
   health_recharge:float;
   energy:float;
-  max_energy:float;
+  max_energy:uint32;
   energy_recharge:float;
 }
 
@@ -78,7 +78,6 @@ table Character {
 
 table Party {
   party_id:uint32;
-  leader_agent_id:uint32;
 }
 
 table Instance {

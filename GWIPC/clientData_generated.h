@@ -280,8 +280,8 @@ struct AgentLiving FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   float weapon_attack_speed_modifier() const {
     return GetField<float>(VT_WEAPON_ATTACK_SPEED_MODIFIER, 0.0f);
   }
-  uint32_t player_number() const {
-    return GetField<uint32_t>(VT_PLAYER_NUMBER, 0);
+  uint16_t player_number() const {
+    return GetField<uint16_t>(VT_PLAYER_NUMBER, 0);
   }
   GWIPC::Profession primary_profession() const {
     return static_cast<GWIPC::Profession>(GetField<int8_t>(VT_PRIMARY_PROFESSION, 0));
@@ -301,8 +301,8 @@ struct AgentLiving FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   float health() const {
     return GetField<float>(VT_HEALTH, 0.0f);
   }
-  float max_health() const {
-    return GetField<float>(VT_MAX_HEALTH, 0.0f);
+  uint32_t max_health() const {
+    return GetField<uint32_t>(VT_MAX_HEALTH, 0);
   }
   float health_recharge() const {
     return GetField<float>(VT_HEALTH_RECHARGE, 0.0f);
@@ -310,8 +310,8 @@ struct AgentLiving FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   float energy() const {
     return GetField<float>(VT_ENERGY, 0.0f);
   }
-  float max_energy() const {
-    return GetField<float>(VT_MAX_ENERGY, 0.0f);
+  uint32_t max_energy() const {
+    return GetField<uint32_t>(VT_MAX_ENERGY, 0);
   }
   float energy_recharge() const {
     return GetField<float>(VT_ENERGY_RECHARGE, 0.0f);
@@ -325,17 +325,17 @@ struct AgentLiving FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyField<float>(verifier, VT_ANIMATION_TYPE, 4) &&
            VerifyField<float>(verifier, VT_WEAPON_ATTACK_SPEED, 4) &&
            VerifyField<float>(verifier, VT_WEAPON_ATTACK_SPEED_MODIFIER, 4) &&
-           VerifyField<uint32_t>(verifier, VT_PLAYER_NUMBER, 4) &&
+           VerifyField<uint16_t>(verifier, VT_PLAYER_NUMBER, 2) &&
            VerifyField<int8_t>(verifier, VT_PRIMARY_PROFESSION, 1) &&
            VerifyField<int8_t>(verifier, VT_SECONDARY_PROFESSION, 1) &&
            VerifyField<int8_t>(verifier, VT_TEAM_COLOR, 1) &&
            VerifyField<uint16_t>(verifier, VT_GUILD_ID, 2) &&
            VerifyField<uint8_t>(verifier, VT_LEVEL, 1) &&
            VerifyField<float>(verifier, VT_HEALTH, 4) &&
-           VerifyField<float>(verifier, VT_MAX_HEALTH, 4) &&
+           VerifyField<uint32_t>(verifier, VT_MAX_HEALTH, 4) &&
            VerifyField<float>(verifier, VT_HEALTH_RECHARGE, 4) &&
            VerifyField<float>(verifier, VT_ENERGY, 4) &&
-           VerifyField<float>(verifier, VT_MAX_ENERGY, 4) &&
+           VerifyField<uint32_t>(verifier, VT_MAX_ENERGY, 4) &&
            VerifyField<float>(verifier, VT_ENERGY_RECHARGE, 4) &&
            verifier.EndTable();
   }
@@ -363,8 +363,8 @@ struct AgentLivingBuilder {
   void add_weapon_attack_speed_modifier(float weapon_attack_speed_modifier) {
     fbb_.AddElement<float>(AgentLiving::VT_WEAPON_ATTACK_SPEED_MODIFIER, weapon_attack_speed_modifier, 0.0f);
   }
-  void add_player_number(uint32_t player_number) {
-    fbb_.AddElement<uint32_t>(AgentLiving::VT_PLAYER_NUMBER, player_number, 0);
+  void add_player_number(uint16_t player_number) {
+    fbb_.AddElement<uint16_t>(AgentLiving::VT_PLAYER_NUMBER, player_number, 0);
   }
   void add_primary_profession(GWIPC::Profession primary_profession) {
     fbb_.AddElement<int8_t>(AgentLiving::VT_PRIMARY_PROFESSION, static_cast<int8_t>(primary_profession), 0);
@@ -384,8 +384,8 @@ struct AgentLivingBuilder {
   void add_health(float health) {
     fbb_.AddElement<float>(AgentLiving::VT_HEALTH, health, 0.0f);
   }
-  void add_max_health(float max_health) {
-    fbb_.AddElement<float>(AgentLiving::VT_MAX_HEALTH, max_health, 0.0f);
+  void add_max_health(uint32_t max_health) {
+    fbb_.AddElement<uint32_t>(AgentLiving::VT_MAX_HEALTH, max_health, 0);
   }
   void add_health_recharge(float health_recharge) {
     fbb_.AddElement<float>(AgentLiving::VT_HEALTH_RECHARGE, health_recharge, 0.0f);
@@ -393,8 +393,8 @@ struct AgentLivingBuilder {
   void add_energy(float energy) {
     fbb_.AddElement<float>(AgentLiving::VT_ENERGY, energy, 0.0f);
   }
-  void add_max_energy(float max_energy) {
-    fbb_.AddElement<float>(AgentLiving::VT_MAX_ENERGY, max_energy, 0.0f);
+  void add_max_energy(uint32_t max_energy) {
+    fbb_.AddElement<uint32_t>(AgentLiving::VT_MAX_ENERGY, max_energy, 0);
   }
   void add_energy_recharge(float energy_recharge) {
     fbb_.AddElement<float>(AgentLiving::VT_ENERGY_RECHARGE, energy_recharge, 0.0f);
@@ -418,17 +418,17 @@ inline flatbuffers::Offset<AgentLiving> CreateAgentLiving(
     float animation_type = 0.0f,
     float weapon_attack_speed = 0.0f,
     float weapon_attack_speed_modifier = 0.0f,
-    uint32_t player_number = 0,
+    uint16_t player_number = 0,
     GWIPC::Profession primary_profession = GWIPC::Profession_None,
     GWIPC::Profession secondary_profession = GWIPC::Profession_None,
     GWIPC::TeamColor team_color = GWIPC::TeamColor_None,
     uint16_t guild_id = 0,
     uint8_t level = 0,
     float health = 0.0f,
-    float max_health = 0.0f,
+    uint32_t max_health = 0,
     float health_recharge = 0.0f,
     float energy = 0.0f,
-    float max_energy = 0.0f,
+    uint32_t max_energy = 0,
     float energy_recharge = 0.0f) {
   AgentLivingBuilder builder_(_fbb);
   builder_.add_energy_recharge(energy_recharge);
@@ -437,7 +437,6 @@ inline flatbuffers::Offset<AgentLiving> CreateAgentLiving(
   builder_.add_health_recharge(health_recharge);
   builder_.add_max_health(max_health);
   builder_.add_health(health);
-  builder_.add_player_number(player_number);
   builder_.add_weapon_attack_speed_modifier(weapon_attack_speed_modifier);
   builder_.add_weapon_attack_speed(weapon_attack_speed);
   builder_.add_animation_type(animation_type);
@@ -445,6 +444,7 @@ inline flatbuffers::Offset<AgentLiving> CreateAgentLiving(
   builder_.add_name(name);
   builder_.add_agent(agent);
   builder_.add_guild_id(guild_id);
+  builder_.add_player_number(player_number);
   builder_.add_level(level);
   builder_.add_team_color(team_color);
   builder_.add_secondary_profession(secondary_profession);
@@ -460,17 +460,17 @@ inline flatbuffers::Offset<AgentLiving> CreateAgentLivingDirect(
     float animation_type = 0.0f,
     float weapon_attack_speed = 0.0f,
     float weapon_attack_speed_modifier = 0.0f,
-    uint32_t player_number = 0,
+    uint16_t player_number = 0,
     GWIPC::Profession primary_profession = GWIPC::Profession_None,
     GWIPC::Profession secondary_profession = GWIPC::Profession_None,
     GWIPC::TeamColor team_color = GWIPC::TeamColor_None,
     uint16_t guild_id = 0,
     uint8_t level = 0,
     float health = 0.0f,
-    float max_health = 0.0f,
+    uint32_t max_health = 0,
     float health_recharge = 0.0f,
     float energy = 0.0f,
-    float max_energy = 0.0f,
+    uint32_t max_energy = 0,
     float energy_recharge = 0.0f) {
   auto name__ = name ? _fbb.CreateString(name) : 0;
   return GWIPC::CreateAgentLiving(
@@ -540,19 +540,14 @@ inline flatbuffers::Offset<Character> CreateCharacter(
 struct Party FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef PartyBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_PARTY_ID = 4,
-    VT_LEADER_AGENT_ID = 6
+    VT_PARTY_ID = 4
   };
   uint32_t party_id() const {
     return GetField<uint32_t>(VT_PARTY_ID, 0);
   }
-  uint32_t leader_agent_id() const {
-    return GetField<uint32_t>(VT_LEADER_AGENT_ID, 0);
-  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint32_t>(verifier, VT_PARTY_ID, 4) &&
-           VerifyField<uint32_t>(verifier, VT_LEADER_AGENT_ID, 4) &&
            verifier.EndTable();
   }
 };
@@ -563,9 +558,6 @@ struct PartyBuilder {
   flatbuffers::uoffset_t start_;
   void add_party_id(uint32_t party_id) {
     fbb_.AddElement<uint32_t>(Party::VT_PARTY_ID, party_id, 0);
-  }
-  void add_leader_agent_id(uint32_t leader_agent_id) {
-    fbb_.AddElement<uint32_t>(Party::VT_LEADER_AGENT_ID, leader_agent_id, 0);
   }
   explicit PartyBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -580,10 +572,8 @@ struct PartyBuilder {
 
 inline flatbuffers::Offset<Party> CreateParty(
     flatbuffers::FlatBufferBuilder &_fbb,
-    uint32_t party_id = 0,
-    uint32_t leader_agent_id = 0) {
+    uint32_t party_id = 0) {
   PartyBuilder builder_(_fbb);
-  builder_.add_leader_agent_id(leader_agent_id);
   builder_.add_party_id(party_id);
   return builder_.Finish();
 }
