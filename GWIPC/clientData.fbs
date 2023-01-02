@@ -69,14 +69,68 @@ table AgentLiving {
   energy:float;
   max_energy:uint32;
   energy_recharge:float;
+
+  party_slot:uint8 = 0;
+}
+
+struct Skill {
+  skill_id:uint16;
+  recharge_ms:uint16;
+  adrenaline:uint8;
+}
+
+table Skillbar {
+    skills:[Skill];
+}
+
+struct Effect{
+  skill_id:uint32;
+  source_agent_id:uint32;
+  duration:float;
+}
+
+struct Buff {
+  skill_id:uint32;
+  target_agent_id:uint32;
+  buff_id:uint32;
 }
 
 table Character {
   agent_living:AgentLiving;
+  skillbar:Skillbar;
+
+  effects:[Effect];
+  buffs:[Buff];
+}
+
+table Hero {
+  agent_living:AgentLiving;
+  skillbar:Skillbar;
+
+  effects:[Effect];
+  buffs:[Buff];
+
+  flag_position:Vec2;
+
+  hero_id:uint32;
+  owner_player_id:uint32;
+}
+
+table MissionObjective {
+  objective_id:uint32;
+  description:string;
+  type:uint32;
 }
 
 table Party {
   party_id:uint32;
+  player_members:[AgentLiving];
+  hero_members:[Hero];
+  henchman_members:[AgentLiving];
+
+  flag_all_position:Vec2;
+
+  mission_objectives:[MissionObjective];
 }
 
 table Instance {
