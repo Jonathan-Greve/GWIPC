@@ -1016,8 +1016,8 @@ struct Party FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentLiving>> *henchman_members() const {
     return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentLiving>> *>(VT_HENCHMAN_MEMBERS);
   }
-  const GWIPC::Vec2 *flag_all_position() const {
-    return GetStruct<const GWIPC::Vec2 *>(VT_FLAG_ALL_POSITION);
+  const GWIPC::Vec3 *flag_all_position() const {
+    return GetStruct<const GWIPC::Vec3 *>(VT_FLAG_ALL_POSITION);
   }
   const flatbuffers::Vector<flatbuffers::Offset<GWIPC::MissionObjective>> *mission_objectives() const {
     return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::MissionObjective>> *>(VT_MISSION_OBJECTIVES);
@@ -1034,7 +1034,7 @@ struct Party FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyOffset(verifier, VT_HENCHMAN_MEMBERS) &&
            verifier.VerifyVector(henchman_members()) &&
            verifier.VerifyVectorOfTables(henchman_members()) &&
-           VerifyField<GWIPC::Vec2>(verifier, VT_FLAG_ALL_POSITION, 4) &&
+           VerifyField<GWIPC::Vec3>(verifier, VT_FLAG_ALL_POSITION, 4) &&
            VerifyOffset(verifier, VT_MISSION_OBJECTIVES) &&
            verifier.VerifyVector(mission_objectives()) &&
            verifier.VerifyVectorOfTables(mission_objectives()) &&
@@ -1058,7 +1058,7 @@ struct PartyBuilder {
   void add_henchman_members(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentLiving>>> henchman_members) {
     fbb_.AddOffset(Party::VT_HENCHMAN_MEMBERS, henchman_members);
   }
-  void add_flag_all_position(const GWIPC::Vec2 *flag_all_position) {
+  void add_flag_all_position(const GWIPC::Vec3 *flag_all_position) {
     fbb_.AddStruct(Party::VT_FLAG_ALL_POSITION, flag_all_position);
   }
   void add_mission_objectives(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::MissionObjective>>> mission_objectives) {
@@ -1081,7 +1081,7 @@ inline flatbuffers::Offset<Party> CreateParty(
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentLiving>>> player_members = 0,
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Hero>>> hero_members = 0,
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentLiving>>> henchman_members = 0,
-    const GWIPC::Vec2 *flag_all_position = nullptr,
+    const GWIPC::Vec3 *flag_all_position = nullptr,
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::MissionObjective>>> mission_objectives = 0) {
   PartyBuilder builder_(_fbb);
   builder_.add_mission_objectives(mission_objectives);
@@ -1099,7 +1099,7 @@ inline flatbuffers::Offset<Party> CreatePartyDirect(
     const std::vector<flatbuffers::Offset<GWIPC::AgentLiving>> *player_members = nullptr,
     const std::vector<flatbuffers::Offset<GWIPC::Hero>> *hero_members = nullptr,
     const std::vector<flatbuffers::Offset<GWIPC::AgentLiving>> *henchman_members = nullptr,
-    const GWIPC::Vec2 *flag_all_position = nullptr,
+    const GWIPC::Vec3 *flag_all_position = nullptr,
     const std::vector<flatbuffers::Offset<GWIPC::MissionObjective>> *mission_objectives = nullptr) {
   auto player_members__ = player_members ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::AgentLiving>>(*player_members) : 0;
   auto hero_members__ = hero_members ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::Hero>>(*hero_members) : 0;

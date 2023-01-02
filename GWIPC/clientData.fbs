@@ -128,7 +128,7 @@ table Party {
   hero_members:[Hero];
   henchman_members:[AgentLiving];
 
-  flag_all_position:Vec2;
+  flag_all_position:Vec3;
 
   mission_objectives:[MissionObjective];
 }
