@@ -1342,7 +1342,8 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_CHARACTER = 4,
     VT_INSTANCE = 6,
     VT_PARTY = 8,
-    VT_GAME_STATE = 10
+    VT_GAME_STATE = 10,
+    VT_QUESTS = 12
   };
   const GWIPC::Character *character() const {
     return GetPointer<const GWIPC::Character *>(VT_CHARACTER);
@@ -1356,6 +1357,9 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   GWIPC::GameState game_state() const {
     return static_cast<GWIPC::GameState>(GetField<int8_t>(VT_GAME_STATE, 0));
   }
+  const flatbuffers::Vector<flatbuffers::Offset<GWIPC::Quest>> *quests() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::Quest>> *>(VT_QUESTS);
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyOffset(verifier, VT_CHARACTER) &&
@@ -1365,6 +1369,9 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyOffset(verifier, VT_PARTY) &&
            verifier.VerifyTable(party()) &&
            VerifyField<int8_t>(verifier, VT_GAME_STATE, 1) &&
+           VerifyOffset(verifier, VT_QUESTS) &&
+           verifier.VerifyVector(quests()) &&
+           verifier.VerifyVectorOfTables(quests()) &&
            verifier.EndTable();
   }
 };
@@ -1385,6 +1392,9 @@ struct ClientDataBuilder {
   void add_game_state(GWIPC::GameState game_state) {
     fbb_.AddElement<int8_t>(ClientData::VT_GAME_STATE, static_cast<int8_t>(game_state), 0);
   }
+  void add_quests(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Quest>>> quests) {
+    fbb_.AddOffset(ClientData::VT_QUESTS, quests);
+  }
   explicit ClientDataBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -1401,13 +1411,32 @@ inline flatbuffers::Offset<ClientData> CreateClientData(
     flatbuffers::Offset<GWIPC::Character> character = 0,
     flatbuffers::Offset<GWIPC::Instance> instance = 0,
     flatbuffers::Offset<GWIPC::Party> party = 0,
-    GWIPC::GameState game_state = GWIPC::GameState_Unknown) {
+    GWIPC::GameState game_state = GWIPC::GameState_Unknown,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Quest>>> quests = 0) {
   ClientDataBuilder builder_(_fbb);
+  builder_.add_quests(quests);
   builder_.add_party(party);
   builder_.add_instance(instance);
   builder_.add_character(character);
   builder_.add_game_state(game_state);
   return builder_.Finish();
+}
+
+inline flatbuffers::Offset<ClientData> CreateClientDataDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    flatbuffers::Offset<GWIPC::Character> character = 0,
+    flatbuffers::Offset<GWIPC::Instance> instance = 0,
+    flatbuffers::Offset<GWIPC::Party> party = 0,
+    GWIPC::GameState game_state = GWIPC::GameState_Unknown,
+    const std::vector<flatbuffers::Offset<GWIPC::Quest>> *quests = nullptr) {
+  auto quests__ = quests ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::Quest>>(*quests) : 0;
+  return GWIPC::CreateClientData(
+      _fbb,
+      character,
+      instance,
+      party,
+      game_state,
+      quests__);
 }
 
 inline const GWIPC::ClientData *GetClientData(const void *buf) {

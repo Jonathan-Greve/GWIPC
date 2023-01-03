@@ -115,7 +115,6 @@ table Character {
   effects:[Effect];
   buffs:[Buff];
 
-  quests:[Quest];
 }
 
 table Hero {
@@ -154,10 +153,11 @@ table Instance {
 }
 
 table ClientData {
-    character:Character;
-    instance:Instance;
-    party:Party;
-    game_state:GameState;
+  character:Character;
+  instance:Instance;
+  party:Party;
+  game_state:GameState;
+  quests:[Quest];
 }
 
 root_type ClientData;
