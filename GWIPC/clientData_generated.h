@@ -33,6 +33,9 @@ struct Effect;
 
 struct Buff;
 
+struct Quest;
+struct QuestBuilder;
+
 struct Character;
 struct CharacterBuilder;
 
@@ -699,6 +702,173 @@ inline flatbuffers::Offset<Skillbar> CreateSkillbarDirect(
   return GWIPC::CreateSkillbar(
       _fbb,
       skills__);
+}
+
+struct Quest FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef QuestBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_QUEST_ID = 4,
+    VT_LOG_STATE = 6,
+    VT_LOCATION = 8,
+    VT_NAME = 10,
+    VT_NPC_NAME = 12,
+    VT_MAP_FROM = 14,
+    VT_MAP_TO = 16,
+    VT_MARKER = 18,
+    VT_DESCRIPTION = 20,
+    VT_OBJECTIVES = 22
+  };
+  uint32_t quest_id() const {
+    return GetField<uint32_t>(VT_QUEST_ID, 0);
+  }
+  uint32_t log_state() const {
+    return GetField<uint32_t>(VT_LOG_STATE, 0);
+  }
+  const flatbuffers::String *location() const {
+    return GetPointer<const flatbuffers::String *>(VT_LOCATION);
+  }
+  const flatbuffers::String *name() const {
+    return GetPointer<const flatbuffers::String *>(VT_NAME);
+  }
+  const flatbuffers::String *npc_name() const {
+    return GetPointer<const flatbuffers::String *>(VT_NPC_NAME);
+  }
+  uint32_t map_from() const {
+    return GetField<uint32_t>(VT_MAP_FROM, 0);
+  }
+  uint32_t map_to() const {
+    return GetField<uint32_t>(VT_MAP_TO, 0);
+  }
+  const GWIPC::Vec3 *marker() const {
+    return GetStruct<const GWIPC::Vec3 *>(VT_MARKER);
+  }
+  const flatbuffers::String *description() const {
+    return GetPointer<const flatbuffers::String *>(VT_DESCRIPTION);
+  }
+  const flatbuffers::String *objectives() const {
+    return GetPointer<const flatbuffers::String *>(VT_OBJECTIVES);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_QUEST_ID, 4) &&
+           VerifyField<uint32_t>(verifier, VT_LOG_STATE, 4) &&
+           VerifyOffset(verifier, VT_LOCATION) &&
+           verifier.VerifyString(location()) &&
+           VerifyOffset(verifier, VT_NAME) &&
+           verifier.VerifyString(name()) &&
+           VerifyOffset(verifier, VT_NPC_NAME) &&
+           verifier.VerifyString(npc_name()) &&
+           VerifyField<uint32_t>(verifier, VT_MAP_FROM, 4) &&
+           VerifyField<uint32_t>(verifier, VT_MAP_TO, 4) &&
+           VerifyField<GWIPC::Vec3>(verifier, VT_MARKER, 4) &&
+           VerifyOffset(verifier, VT_DESCRIPTION) &&
+           verifier.VerifyString(description()) &&
+           VerifyOffset(verifier, VT_OBJECTIVES) &&
+           verifier.VerifyString(objectives()) &&
+           verifier.EndTable();
+  }
+};
+
+struct QuestBuilder {
+  typedef Quest Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_quest_id(uint32_t quest_id) {
+    fbb_.AddElement<uint32_t>(Quest::VT_QUEST_ID, quest_id, 0);
+  }
+  void add_log_state(uint32_t log_state) {
+    fbb_.AddElement<uint32_t>(Quest::VT_LOG_STATE, log_state, 0);
+  }
+  void add_location(flatbuffers::Offset<flatbuffers::String> location) {
+    fbb_.AddOffset(Quest::VT_LOCATION, location);
+  }
+  void add_name(flatbuffers::Offset<flatbuffers::String> name) {
+    fbb_.AddOffset(Quest::VT_NAME, name);
+  }
+  void add_npc_name(flatbuffers::Offset<flatbuffers::String> npc_name) {
+    fbb_.AddOffset(Quest::VT_NPC_NAME, npc_name);
+  }
+  void add_map_from(uint32_t map_from) {
+    fbb_.AddElement<uint32_t>(Quest::VT_MAP_FROM, map_from, 0);
+  }
+  void add_map_to(uint32_t map_to) {
+    fbb_.AddElement<uint32_t>(Quest::VT_MAP_TO, map_to, 0);
+  }
+  void add_marker(const GWIPC::Vec3 *marker) {
+    fbb_.AddStruct(Quest::VT_MARKER, marker);
+  }
+  void add_description(flatbuffers::Offset<flatbuffers::String> description) {
+    fbb_.AddOffset(Quest::VT_DESCRIPTION, description);
+  }
+  void add_objectives(flatbuffers::Offset<flatbuffers::String> objectives) {
+    fbb_.AddOffset(Quest::VT_OBJECTIVES, objectives);
+  }
+  explicit QuestBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  flatbuffers::Offset<Quest> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<Quest>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<Quest> CreateQuest(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t quest_id = 0,
+    uint32_t log_state = 0,
+    flatbuffers::Offset<flatbuffers::String> location = 0,
+    flatbuffers::Offset<flatbuffers::String> name = 0,
+    flatbuffers::Offset<flatbuffers::String> npc_name = 0,
+    uint32_t map_from = 0,
+    uint32_t map_to = 0,
+    const GWIPC::Vec3 *marker = nullptr,
+    flatbuffers::Offset<flatbuffers::String> description = 0,
+    flatbuffers::Offset<flatbuffers::String> objectives = 0) {
+  QuestBuilder builder_(_fbb);
+  builder_.add_objectives(objectives);
+  builder_.add_description(description);
+  builder_.add_marker(marker);
+  builder_.add_map_to(map_to);
+  builder_.add_map_from(map_from);
+  builder_.add_npc_name(npc_name);
+  builder_.add_name(name);
+  builder_.add_location(location);
+  builder_.add_log_state(log_state);
+  builder_.add_quest_id(quest_id);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<Quest> CreateQuestDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t quest_id = 0,
+    uint32_t log_state = 0,
+    const char *location = nullptr,
+    const char *name = nullptr,
+    const char *npc_name = nullptr,
+    uint32_t map_from = 0,
+    uint32_t map_to = 0,
+    const GWIPC::Vec3 *marker = nullptr,
+    const char *description = nullptr,
+    const char *objectives = nullptr) {
+  auto location__ = location ? _fbb.CreateString(location) : 0;
+  auto name__ = name ? _fbb.CreateString(name) : 0;
+  auto npc_name__ = npc_name ? _fbb.CreateString(npc_name) : 0;
+  auto description__ = description ? _fbb.CreateString(description) : 0;
+  auto objectives__ = objectives ? _fbb.CreateString(objectives) : 0;
+  return GWIPC::CreateQuest(
+      _fbb,
+      quest_id,
+      log_state,
+      location__,
+      name__,
+      npc_name__,
+      map_from,
+      map_to,
+      marker,
+      description__,
+      objectives__);
 }
 
 struct Character FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {

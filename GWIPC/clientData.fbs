@@ -95,12 +95,27 @@ struct Buff {
   buff_id:uint32;
 }
 
+table Quest {
+  quest_id:uint32;
+  log_state:uint32;
+  location:string;
+  name:string;
+  npc_name:string;
+  map_from:uint32;
+  map_to:uint32;
+  marker:Vec3;
+  description:string;
+  objectives:string;
+}
+
 table Character {
   agent_living:AgentLiving;
   skillbar:Skillbar;
 
   effects:[Effect];
   buffs:[Buff];
+
+  quests:[Quest];
 }
 
 table Hero {
