@@ -907,7 +907,8 @@ struct Character FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_AGENT_LIVING = 4,
     VT_SKILLBAR = 6,
     VT_EFFECTS = 8,
-    VT_BUFFS = 10
+    VT_BUFFS = 10,
+    VT_TARGET_AGENT_ID = 12
   };
   const GWIPC::AgentLiving *agent_living() const {
     return GetPointer<const GWIPC::AgentLiving *>(VT_AGENT_LIVING);
@@ -921,6 +922,9 @@ struct Character FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const flatbuffers::Vector<const GWIPC::Buff *> *buffs() const {
     return GetPointer<const flatbuffers::Vector<const GWIPC::Buff *> *>(VT_BUFFS);
   }
+  uint32_t target_agent_id() const {
+    return GetField<uint32_t>(VT_TARGET_AGENT_ID, 0);
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyOffset(verifier, VT_AGENT_LIVING) &&
@@ -931,6 +935,7 @@ struct Character FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            verifier.VerifyVector(effects()) &&
            VerifyOffset(verifier, VT_BUFFS) &&
            verifier.VerifyVector(buffs()) &&
+           VerifyField<uint32_t>(verifier, VT_TARGET_AGENT_ID, 4) &&
            verifier.EndTable();
   }
 };
@@ -951,6 +956,9 @@ struct CharacterBuilder {
   void add_buffs(flatbuffers::Offset<flatbuffers::Vector<const GWIPC::Buff *>> buffs) {
     fbb_.AddOffset(Character::VT_BUFFS, buffs);
   }
+  void add_target_agent_id(uint32_t target_agent_id) {
+    fbb_.AddElement<uint32_t>(Character::VT_TARGET_AGENT_ID, target_agent_id, 0);
+  }
   explicit CharacterBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -967,8 +975,10 @@ inline flatbuffers::Offset<Character> CreateCharacter(
     flatbuffers::Offset<GWIPC::AgentLiving> agent_living = 0,
     flatbuffers::Offset<GWIPC::Skillbar> skillbar = 0,
     flatbuffers::Offset<flatbuffers::Vector<const GWIPC::Effect *>> effects = 0,
-    flatbuffers::Offset<flatbuffers::Vector<const GWIPC::Buff *>> buffs = 0) {
+    flatbuffers::Offset<flatbuffers::Vector<const GWIPC::Buff *>> buffs = 0,
+    uint32_t target_agent_id = 0) {
   CharacterBuilder builder_(_fbb);
+  builder_.add_target_agent_id(target_agent_id);
   builder_.add_buffs(buffs);
   builder_.add_effects(effects);
   builder_.add_skillbar(skillbar);
@@ -981,7 +991,8 @@ inline flatbuffers::Offset<Character> CreateCharacterDirect(
     flatbuffers::Offset<GWIPC::AgentLiving> agent_living = 0,
     flatbuffers::Offset<GWIPC::Skillbar> skillbar = 0,
     const std::vector<GWIPC::Effect> *effects = nullptr,
-    const std::vector<GWIPC::Buff> *buffs = nullptr) {
+    const std::vector<GWIPC::Buff> *buffs = nullptr,
+    uint32_t target_agent_id = 0) {
   auto effects__ = effects ? _fbb.CreateVectorOfStructs<GWIPC::Effect>(*effects) : 0;
   auto buffs__ = buffs ? _fbb.CreateVectorOfStructs<GWIPC::Buff>(*buffs) : 0;
   return GWIPC::CreateCharacter(
@@ -989,7 +1000,8 @@ inline flatbuffers::Offset<Character> CreateCharacterDirect(
       agent_living,
       skillbar,
       effects__,
-      buffs__);
+      buffs__,
+      target_agent_id);
 }
 
 struct Hero FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {

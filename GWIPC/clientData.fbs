@@ -115,6 +115,8 @@ table Character {
 
   effects:[Effect];
   buffs:[Buff];
+
+  target_agent_id:uint32;
 }
 
 table Hero {
