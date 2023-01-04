@@ -1408,7 +1408,8 @@ struct BagItem FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_TYPE = 20,
     VT_VALUE = 22,
     VT_QUANTITY = 24,
-    VT_IS_WEAPON_SET_ITEM = 26
+    VT_IS_WEAPON_SET_ITEM = 26,
+    VT_INDEX = 28
   };
   uint32_t item_id() const {
     return GetField<uint32_t>(VT_ITEM_ID, 0);
@@ -1446,6 +1447,9 @@ struct BagItem FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   bool is_weapon_set_item() const {
     return GetField<uint8_t>(VT_IS_WEAPON_SET_ITEM, 0) != 0;
   }
+  uint8_t index() const {
+    return GetField<uint8_t>(VT_INDEX, 0);
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint32_t>(verifier, VT_ITEM_ID, 4) &&
@@ -1464,6 +1468,7 @@ struct BagItem FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyField<uint16_t>(verifier, VT_VALUE, 2) &&
            VerifyField<uint16_t>(verifier, VT_QUANTITY, 2) &&
            VerifyField<uint8_t>(verifier, VT_IS_WEAPON_SET_ITEM, 1) &&
+           VerifyField<uint8_t>(verifier, VT_INDEX, 1) &&
            verifier.EndTable();
   }
 };
@@ -1508,6 +1513,9 @@ struct BagItemBuilder {
   void add_is_weapon_set_item(bool is_weapon_set_item) {
     fbb_.AddElement<uint8_t>(BagItem::VT_IS_WEAPON_SET_ITEM, static_cast<uint8_t>(is_weapon_set_item), 0);
   }
+  void add_index(uint8_t index) {
+    fbb_.AddElement<uint8_t>(BagItem::VT_INDEX, index, 0);
+  }
   explicit BagItemBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -1532,7 +1540,8 @@ inline flatbuffers::Offset<BagItem> CreateBagItem(
     uint8_t type = 0,
     uint16_t value = 0,
     uint16_t quantity = 0,
-    bool is_weapon_set_item = false) {
+    bool is_weapon_set_item = false,
+    uint8_t index = 0) {
   BagItemBuilder builder_(_fbb);
   builder_.add_interaction(interaction);
   builder_.add_item_modifier(item_modifier);
@@ -1544,6 +1553,7 @@ inline flatbuffers::Offset<BagItem> CreateBagItem(
   builder_.add_item_id(item_id);
   builder_.add_quantity(quantity);
   builder_.add_value(value);
+  builder_.add_index(index);
   builder_.add_is_weapon_set_item(is_weapon_set_item);
   builder_.add_type(type);
   return builder_.Finish();
@@ -1562,7 +1572,8 @@ inline flatbuffers::Offset<BagItem> CreateBagItemDirect(
     uint8_t type = 0,
     uint16_t value = 0,
     uint16_t quantity = 0,
-    bool is_weapon_set_item = false) {
+    bool is_weapon_set_item = false,
+    uint8_t index = 0) {
   auto name__ = name ? _fbb.CreateString(name) : 0;
   auto single_item_name__ = single_item_name ? _fbb.CreateString(single_item_name) : 0;
   auto full_name__ = full_name ? _fbb.CreateString(full_name) : 0;
@@ -1580,7 +1591,8 @@ inline flatbuffers::Offset<BagItem> CreateBagItemDirect(
       type,
       value,
       quantity,
-      is_weapon_set_item);
+      is_weapon_set_item,
+      index);
 }
 
 struct Bag FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {

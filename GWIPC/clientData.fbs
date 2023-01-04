@@ -169,6 +169,7 @@ table BagItem {
   value:uint16;
   quantity:uint16;
   is_weapon_set_item:bool;
+  index:uint8;
 }
 
 table Bag {
