@@ -11,9 +11,10 @@ struct Vec3 {
   z:float;
 }
 
-enum GameState : byte { Unknown = 0, Loading = 1, CharSelect = 2, InGame = 3 }
-enum TeamColor : byte { None = 0, Blue = 1, Red = 2, Yellow = 3 }
-enum Profession : byte { 
+enum MapInstanceType:byte { Outpost = 0 , Explorable = 1}
+enum GameState:byte { Unknown = 0, Loading = 1, CharSelect = 2, InGame = 3 }
+enum TeamColor:byte { None = 0, Blue = 1, Red = 2, Yellow = 3 }
+enum Profession:byte { 
   None = 0, 
   Warrior = 1, 
   Ranger = 2,
@@ -114,7 +115,6 @@ table Character {
 
   effects:[Effect];
   buffs:[Buff];
-
 }
 
 table Hero {
@@ -150,6 +150,7 @@ table Party {
 table Instance {
   instance_id:uint32;
   map_id:uint32;
+  map_instance_type:MapInstanceType;
 }
 
 table ClientData {

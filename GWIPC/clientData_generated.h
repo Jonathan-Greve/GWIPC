@@ -54,6 +54,36 @@ struct InstanceBuilder;
 struct ClientData;
 struct ClientDataBuilder;
 
+enum MapInstanceType : int8_t {
+  MapInstanceType_Outpost = 0,
+  MapInstanceType_Explorable = 1,
+  MapInstanceType_MIN = MapInstanceType_Outpost,
+  MapInstanceType_MAX = MapInstanceType_Explorable
+};
+
+inline const MapInstanceType (&EnumValuesMapInstanceType())[2] {
+  static const MapInstanceType values[] = {
+    MapInstanceType_Outpost,
+    MapInstanceType_Explorable
+  };
+  return values;
+}
+
+inline const char * const *EnumNamesMapInstanceType() {
+  static const char * const names[3] = {
+    "Outpost",
+    "Explorable",
+    nullptr
+  };
+  return names;
+}
+
+inline const char *EnumNameMapInstanceType(MapInstanceType e) {
+  if (flatbuffers::IsOutRange(e, MapInstanceType_Outpost, MapInstanceType_Explorable)) return "";
+  const size_t index = static_cast<size_t>(e);
+  return EnumNamesMapInstanceType()[index];
+}
+
 enum GameState : int8_t {
   GameState_Unknown = 0,
   GameState_Loading = 1,
@@ -1289,7 +1319,8 @@ struct Instance FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef InstanceBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_INSTANCE_ID = 4,
-    VT_MAP_ID = 6
+    VT_MAP_ID = 6,
+    VT_MAP_INSTANCE_TYPE = 8
   };
   uint32_t instance_id() const {
     return GetField<uint32_t>(VT_INSTANCE_ID, 0);
@@ -1297,10 +1328,14 @@ struct Instance FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   uint32_t map_id() const {
     return GetField<uint32_t>(VT_MAP_ID, 0);
   }
+  GWIPC::MapInstanceType map_instance_type() const {
+    return static_cast<GWIPC::MapInstanceType>(GetField<int8_t>(VT_MAP_INSTANCE_TYPE, 0));
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint32_t>(verifier, VT_INSTANCE_ID, 4) &&
            VerifyField<uint32_t>(verifier, VT_MAP_ID, 4) &&
+           VerifyField<int8_t>(verifier, VT_MAP_INSTANCE_TYPE, 1) &&
            verifier.EndTable();
   }
 };
@@ -1314,6 +1349,9 @@ struct InstanceBuilder {
   }
   void add_map_id(uint32_t map_id) {
     fbb_.AddElement<uint32_t>(Instance::VT_MAP_ID, map_id, 0);
+  }
+  void add_map_instance_type(GWIPC::MapInstanceType map_instance_type) {
+    fbb_.AddElement<int8_t>(Instance::VT_MAP_INSTANCE_TYPE, static_cast<int8_t>(map_instance_type), 0);
   }
   explicit InstanceBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -1329,10 +1367,12 @@ struct InstanceBuilder {
 inline flatbuffers::Offset<Instance> CreateInstance(
     flatbuffers::FlatBufferBuilder &_fbb,
     uint32_t instance_id = 0,
-    uint32_t map_id = 0) {
+    uint32_t map_id = 0,
+    GWIPC::MapInstanceType map_instance_type = GWIPC::MapInstanceType_Outpost) {
   InstanceBuilder builder_(_fbb);
   builder_.add_map_id(map_id);
   builder_.add_instance_id(instance_id);
+  builder_.add_map_instance_type(map_instance_type);
   return builder_.Finish();
 }
 
