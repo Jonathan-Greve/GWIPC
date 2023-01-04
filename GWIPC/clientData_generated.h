@@ -51,6 +51,12 @@ struct PartyBuilder;
 struct Instance;
 struct InstanceBuilder;
 
+struct BagItem;
+struct BagItemBuilder;
+
+struct Bag;
+struct BagBuilder;
+
 struct ClientData;
 struct ClientDataBuilder;
 
@@ -1388,6 +1394,259 @@ inline flatbuffers::Offset<Instance> CreateInstance(
   return builder_.Finish();
 }
 
+struct BagItem FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef BagItemBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_ITEM_ID = 4,
+    VT_NAME = 6,
+    VT_SINGLE_ITEM_NAME = 8,
+    VT_FULL_NAME = 10,
+    VT_DESCRIPTION = 12,
+    VT_MODEL_ID = 14,
+    VT_ITEM_MODIFIER = 16,
+    VT_INTERACTION = 18,
+    VT_TYPE = 20,
+    VT_VALUE = 22,
+    VT_QUANTITY = 24,
+    VT_IS_WEAPON_SET_ITEM = 26
+  };
+  uint32_t item_id() const {
+    return GetField<uint32_t>(VT_ITEM_ID, 0);
+  }
+  const flatbuffers::String *name() const {
+    return GetPointer<const flatbuffers::String *>(VT_NAME);
+  }
+  const flatbuffers::String *single_item_name() const {
+    return GetPointer<const flatbuffers::String *>(VT_SINGLE_ITEM_NAME);
+  }
+  const flatbuffers::String *full_name() const {
+    return GetPointer<const flatbuffers::String *>(VT_FULL_NAME);
+  }
+  const flatbuffers::String *description() const {
+    return GetPointer<const flatbuffers::String *>(VT_DESCRIPTION);
+  }
+  uint32_t model_id() const {
+    return GetField<uint32_t>(VT_MODEL_ID, 0);
+  }
+  uint32_t item_modifier() const {
+    return GetField<uint32_t>(VT_ITEM_MODIFIER, 0);
+  }
+  uint32_t interaction() const {
+    return GetField<uint32_t>(VT_INTERACTION, 0);
+  }
+  uint8_t type() const {
+    return GetField<uint8_t>(VT_TYPE, 0);
+  }
+  uint16_t value() const {
+    return GetField<uint16_t>(VT_VALUE, 0);
+  }
+  uint16_t quantity() const {
+    return GetField<uint16_t>(VT_QUANTITY, 0);
+  }
+  bool is_weapon_set_item() const {
+    return GetField<uint8_t>(VT_IS_WEAPON_SET_ITEM, 0) != 0;
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_ITEM_ID, 4) &&
+           VerifyOffset(verifier, VT_NAME) &&
+           verifier.VerifyString(name()) &&
+           VerifyOffset(verifier, VT_SINGLE_ITEM_NAME) &&
+           verifier.VerifyString(single_item_name()) &&
+           VerifyOffset(verifier, VT_FULL_NAME) &&
+           verifier.VerifyString(full_name()) &&
+           VerifyOffset(verifier, VT_DESCRIPTION) &&
+           verifier.VerifyString(description()) &&
+           VerifyField<uint32_t>(verifier, VT_MODEL_ID, 4) &&
+           VerifyField<uint32_t>(verifier, VT_ITEM_MODIFIER, 4) &&
+           VerifyField<uint32_t>(verifier, VT_INTERACTION, 4) &&
+           VerifyField<uint8_t>(verifier, VT_TYPE, 1) &&
+           VerifyField<uint16_t>(verifier, VT_VALUE, 2) &&
+           VerifyField<uint16_t>(verifier, VT_QUANTITY, 2) &&
+           VerifyField<uint8_t>(verifier, VT_IS_WEAPON_SET_ITEM, 1) &&
+           verifier.EndTable();
+  }
+};
+
+struct BagItemBuilder {
+  typedef BagItem Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_item_id(uint32_t item_id) {
+    fbb_.AddElement<uint32_t>(BagItem::VT_ITEM_ID, item_id, 0);
+  }
+  void add_name(flatbuffers::Offset<flatbuffers::String> name) {
+    fbb_.AddOffset(BagItem::VT_NAME, name);
+  }
+  void add_single_item_name(flatbuffers::Offset<flatbuffers::String> single_item_name) {
+    fbb_.AddOffset(BagItem::VT_SINGLE_ITEM_NAME, single_item_name);
+  }
+  void add_full_name(flatbuffers::Offset<flatbuffers::String> full_name) {
+    fbb_.AddOffset(BagItem::VT_FULL_NAME, full_name);
+  }
+  void add_description(flatbuffers::Offset<flatbuffers::String> description) {
+    fbb_.AddOffset(BagItem::VT_DESCRIPTION, description);
+  }
+  void add_model_id(uint32_t model_id) {
+    fbb_.AddElement<uint32_t>(BagItem::VT_MODEL_ID, model_id, 0);
+  }
+  void add_item_modifier(uint32_t item_modifier) {
+    fbb_.AddElement<uint32_t>(BagItem::VT_ITEM_MODIFIER, item_modifier, 0);
+  }
+  void add_interaction(uint32_t interaction) {
+    fbb_.AddElement<uint32_t>(BagItem::VT_INTERACTION, interaction, 0);
+  }
+  void add_type(uint8_t type) {
+    fbb_.AddElement<uint8_t>(BagItem::VT_TYPE, type, 0);
+  }
+  void add_value(uint16_t value) {
+    fbb_.AddElement<uint16_t>(BagItem::VT_VALUE, value, 0);
+  }
+  void add_quantity(uint16_t quantity) {
+    fbb_.AddElement<uint16_t>(BagItem::VT_QUANTITY, quantity, 0);
+  }
+  void add_is_weapon_set_item(bool is_weapon_set_item) {
+    fbb_.AddElement<uint8_t>(BagItem::VT_IS_WEAPON_SET_ITEM, static_cast<uint8_t>(is_weapon_set_item), 0);
+  }
+  explicit BagItemBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  flatbuffers::Offset<BagItem> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<BagItem>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<BagItem> CreateBagItem(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t item_id = 0,
+    flatbuffers::Offset<flatbuffers::String> name = 0,
+    flatbuffers::Offset<flatbuffers::String> single_item_name = 0,
+    flatbuffers::Offset<flatbuffers::String> full_name = 0,
+    flatbuffers::Offset<flatbuffers::String> description = 0,
+    uint32_t model_id = 0,
+    uint32_t item_modifier = 0,
+    uint32_t interaction = 0,
+    uint8_t type = 0,
+    uint16_t value = 0,
+    uint16_t quantity = 0,
+    bool is_weapon_set_item = false) {
+  BagItemBuilder builder_(_fbb);
+  builder_.add_interaction(interaction);
+  builder_.add_item_modifier(item_modifier);
+  builder_.add_model_id(model_id);
+  builder_.add_description(description);
+  builder_.add_full_name(full_name);
+  builder_.add_single_item_name(single_item_name);
+  builder_.add_name(name);
+  builder_.add_item_id(item_id);
+  builder_.add_quantity(quantity);
+  builder_.add_value(value);
+  builder_.add_is_weapon_set_item(is_weapon_set_item);
+  builder_.add_type(type);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<BagItem> CreateBagItemDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t item_id = 0,
+    const char *name = nullptr,
+    const char *single_item_name = nullptr,
+    const char *full_name = nullptr,
+    const char *description = nullptr,
+    uint32_t model_id = 0,
+    uint32_t item_modifier = 0,
+    uint32_t interaction = 0,
+    uint8_t type = 0,
+    uint16_t value = 0,
+    uint16_t quantity = 0,
+    bool is_weapon_set_item = false) {
+  auto name__ = name ? _fbb.CreateString(name) : 0;
+  auto single_item_name__ = single_item_name ? _fbb.CreateString(single_item_name) : 0;
+  auto full_name__ = full_name ? _fbb.CreateString(full_name) : 0;
+  auto description__ = description ? _fbb.CreateString(description) : 0;
+  return GWIPC::CreateBagItem(
+      _fbb,
+      item_id,
+      name__,
+      single_item_name__,
+      full_name__,
+      description__,
+      model_id,
+      item_modifier,
+      interaction,
+      type,
+      value,
+      quantity,
+      is_weapon_set_item);
+}
+
+struct Bag FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef BagBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_BAG_SIZE = 4,
+    VT_ITEMS = 6
+  };
+  uint8_t bag_size() const {
+    return GetField<uint8_t>(VT_BAG_SIZE, 0);
+  }
+  const flatbuffers::Vector<flatbuffers::Offset<GWIPC::BagItem>> *items() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::BagItem>> *>(VT_ITEMS);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint8_t>(verifier, VT_BAG_SIZE, 1) &&
+           VerifyOffset(verifier, VT_ITEMS) &&
+           verifier.VerifyVector(items()) &&
+           verifier.VerifyVectorOfTables(items()) &&
+           verifier.EndTable();
+  }
+};
+
+struct BagBuilder {
+  typedef Bag Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_bag_size(uint8_t bag_size) {
+    fbb_.AddElement<uint8_t>(Bag::VT_BAG_SIZE, bag_size, 0);
+  }
+  void add_items(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::BagItem>>> items) {
+    fbb_.AddOffset(Bag::VT_ITEMS, items);
+  }
+  explicit BagBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  flatbuffers::Offset<Bag> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<Bag>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<Bag> CreateBag(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    uint8_t bag_size = 0,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::BagItem>>> items = 0) {
+  BagBuilder builder_(_fbb);
+  builder_.add_items(items);
+  builder_.add_bag_size(bag_size);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<Bag> CreateBagDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    uint8_t bag_size = 0,
+    const std::vector<flatbuffers::Offset<GWIPC::BagItem>> *items = nullptr) {
+  auto items__ = items ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::BagItem>>(*items) : 0;
+  return GWIPC::CreateBag(
+      _fbb,
+      bag_size,
+      items__);
+}
+
 struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef ClientDataBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -1395,7 +1654,9 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_INSTANCE = 6,
     VT_PARTY = 8,
     VT_GAME_STATE = 10,
-    VT_QUESTS = 12
+    VT_QUESTS = 12,
+    VT_BAGS = 14,
+    VT_ITEMS_EQUIPED = 16
   };
   const GWIPC::Character *character() const {
     return GetPointer<const GWIPC::Character *>(VT_CHARACTER);
@@ -1412,6 +1673,12 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const flatbuffers::Vector<flatbuffers::Offset<GWIPC::Quest>> *quests() const {
     return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::Quest>> *>(VT_QUESTS);
   }
+  const flatbuffers::Vector<flatbuffers::Offset<GWIPC::Bag>> *bags() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::Bag>> *>(VT_BAGS);
+  }
+  const flatbuffers::Vector<flatbuffers::Offset<GWIPC::BagItem>> *items_equiped() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::BagItem>> *>(VT_ITEMS_EQUIPED);
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyOffset(verifier, VT_CHARACTER) &&
@@ -1424,6 +1691,12 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyOffset(verifier, VT_QUESTS) &&
            verifier.VerifyVector(quests()) &&
            verifier.VerifyVectorOfTables(quests()) &&
+           VerifyOffset(verifier, VT_BAGS) &&
+           verifier.VerifyVector(bags()) &&
+           verifier.VerifyVectorOfTables(bags()) &&
+           VerifyOffset(verifier, VT_ITEMS_EQUIPED) &&
+           verifier.VerifyVector(items_equiped()) &&
+           verifier.VerifyVectorOfTables(items_equiped()) &&
            verifier.EndTable();
   }
 };
@@ -1447,6 +1720,12 @@ struct ClientDataBuilder {
   void add_quests(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Quest>>> quests) {
     fbb_.AddOffset(ClientData::VT_QUESTS, quests);
   }
+  void add_bags(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Bag>>> bags) {
+    fbb_.AddOffset(ClientData::VT_BAGS, bags);
+  }
+  void add_items_equiped(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::BagItem>>> items_equiped) {
+    fbb_.AddOffset(ClientData::VT_ITEMS_EQUIPED, items_equiped);
+  }
   explicit ClientDataBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -1464,8 +1743,12 @@ inline flatbuffers::Offset<ClientData> CreateClientData(
     flatbuffers::Offset<GWIPC::Instance> instance = 0,
     flatbuffers::Offset<GWIPC::Party> party = 0,
     GWIPC::GameState game_state = GWIPC::GameState_Unknown,
-    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Quest>>> quests = 0) {
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Quest>>> quests = 0,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Bag>>> bags = 0,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::BagItem>>> items_equiped = 0) {
   ClientDataBuilder builder_(_fbb);
+  builder_.add_items_equiped(items_equiped);
+  builder_.add_bags(bags);
   builder_.add_quests(quests);
   builder_.add_party(party);
   builder_.add_instance(instance);
@@ -1480,15 +1763,21 @@ inline flatbuffers::Offset<ClientData> CreateClientDataDirect(
     flatbuffers::Offset<GWIPC::Instance> instance = 0,
     flatbuffers::Offset<GWIPC::Party> party = 0,
     GWIPC::GameState game_state = GWIPC::GameState_Unknown,
-    const std::vector<flatbuffers::Offset<GWIPC::Quest>> *quests = nullptr) {
+    const std::vector<flatbuffers::Offset<GWIPC::Quest>> *quests = nullptr,
+    const std::vector<flatbuffers::Offset<GWIPC::Bag>> *bags = nullptr,
+    const std::vector<flatbuffers::Offset<GWIPC::BagItem>> *items_equiped = nullptr) {
   auto quests__ = quests ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::Quest>>(*quests) : 0;
+  auto bags__ = bags ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::Bag>>(*bags) : 0;
+  auto items_equiped__ = items_equiped ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::BagItem>>(*items_equiped) : 0;
   return GWIPC::CreateClientData(
       _fbb,
       character,
       instance,
       party,
       game_state,
-      quests__);
+      quests__,
+      bags__,
+      items_equiped__);
 }
 
 inline const GWIPC::ClientData *GetClientData(const void *buf) {

@@ -155,12 +155,35 @@ table Instance {
   map_instance_type:MapInstanceType;
 }
 
+
+table BagItem {
+  item_id:uint32;
+  name:string;
+  single_item_name:string;
+  full_name:string;
+  description:string;
+  model_id:uint32;
+  item_modifier:uint32;
+  interaction:uint32;
+  type:uint8;
+  value:uint16;
+  quantity:uint16;
+  is_weapon_set_item:bool;
+}
+
+table Bag {
+  bag_size:uint8;
+  items:[BagItem];
+}
+
 table ClientData {
   character:Character;
   instance:Instance;
   party:Party;
   game_state:GameState;
   quests:[Quest];
+  bags:[Bag];
+  items_equiped:[BagItem];
 }
 
 root_type ClientData;
