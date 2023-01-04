@@ -9,5 +9,5 @@
 
 namespace GWIPC
 {
-constexpr uint32_t CLIENTDATA_SIZE = 4048;
+constexpr uint32_t CLIENTDATA_SIZE = 8096;
 }
