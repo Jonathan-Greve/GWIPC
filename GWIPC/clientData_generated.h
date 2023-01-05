@@ -57,6 +57,9 @@ struct BagItemBuilder;
 struct Bag;
 struct BagBuilder;
 
+struct GWDialog;
+struct GWDialogBuilder;
+
 struct ClientData;
 struct ClientDataBuilder;
 
@@ -1659,6 +1662,105 @@ inline flatbuffers::Offset<Bag> CreateBagDirect(
       items__);
 }
 
+struct GWDialog FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef GWDialogBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_ID = 4,
+    VT_TEXT = 6,
+    VT_SKILL_ID = 8,
+    VT_BUTTON_ICON = 10,
+    VT_TIME_AVAILABLE_MS = 12
+  };
+  uint32_t id() const {
+    return GetField<uint32_t>(VT_ID, 0);
+  }
+  const flatbuffers::String *text() const {
+    return GetPointer<const flatbuffers::String *>(VT_TEXT);
+  }
+  uint32_t skill_id() const {
+    return GetField<uint32_t>(VT_SKILL_ID, 0);
+  }
+  uint32_t button_icon() const {
+    return GetField<uint32_t>(VT_BUTTON_ICON, 0);
+  }
+  uint32_t time_available_ms() const {
+    return GetField<uint32_t>(VT_TIME_AVAILABLE_MS, 0);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_ID, 4) &&
+           VerifyOffset(verifier, VT_TEXT) &&
+           verifier.VerifyString(text()) &&
+           VerifyField<uint32_t>(verifier, VT_SKILL_ID, 4) &&
+           VerifyField<uint32_t>(verifier, VT_BUTTON_ICON, 4) &&
+           VerifyField<uint32_t>(verifier, VT_TIME_AVAILABLE_MS, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct GWDialogBuilder {
+  typedef GWDialog Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_id(uint32_t id) {
+    fbb_.AddElement<uint32_t>(GWDialog::VT_ID, id, 0);
+  }
+  void add_text(flatbuffers::Offset<flatbuffers::String> text) {
+    fbb_.AddOffset(GWDialog::VT_TEXT, text);
+  }
+  void add_skill_id(uint32_t skill_id) {
+    fbb_.AddElement<uint32_t>(GWDialog::VT_SKILL_ID, skill_id, 0);
+  }
+  void add_button_icon(uint32_t button_icon) {
+    fbb_.AddElement<uint32_t>(GWDialog::VT_BUTTON_ICON, button_icon, 0);
+  }
+  void add_time_available_ms(uint32_t time_available_ms) {
+    fbb_.AddElement<uint32_t>(GWDialog::VT_TIME_AVAILABLE_MS, time_available_ms, 0);
+  }
+  explicit GWDialogBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  flatbuffers::Offset<GWDialog> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<GWDialog>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<GWDialog> CreateGWDialog(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t id = 0,
+    flatbuffers::Offset<flatbuffers::String> text = 0,
+    uint32_t skill_id = 0,
+    uint32_t button_icon = 0,
+    uint32_t time_available_ms = 0) {
+  GWDialogBuilder builder_(_fbb);
+  builder_.add_time_available_ms(time_available_ms);
+  builder_.add_button_icon(button_icon);
+  builder_.add_skill_id(skill_id);
+  builder_.add_text(text);
+  builder_.add_id(id);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<GWDialog> CreateGWDialogDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t id = 0,
+    const char *text = nullptr,
+    uint32_t skill_id = 0,
+    uint32_t button_icon = 0,
+    uint32_t time_available_ms = 0) {
+  auto text__ = text ? _fbb.CreateString(text) : 0;
+  return GWIPC::CreateGWDialog(
+      _fbb,
+      id,
+      text__,
+      skill_id,
+      button_icon,
+      time_available_ms);
+}
+
 struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef ClientDataBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -1668,7 +1770,8 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_GAME_STATE = 10,
     VT_QUESTS = 12,
     VT_BAGS = 14,
-    VT_ITEMS_EQUIPED = 16
+    VT_ITEMS_EQUIPED = 16,
+    VT_DIALOGS = 18
   };
   const GWIPC::Character *character() const {
     return GetPointer<const GWIPC::Character *>(VT_CHARACTER);
@@ -1691,6 +1794,9 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const flatbuffers::Vector<flatbuffers::Offset<GWIPC::BagItem>> *items_equiped() const {
     return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::BagItem>> *>(VT_ITEMS_EQUIPED);
   }
+  const flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>> *dialogs() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>> *>(VT_DIALOGS);
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyOffset(verifier, VT_CHARACTER) &&
@@ -1709,6 +1815,9 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyOffset(verifier, VT_ITEMS_EQUIPED) &&
            verifier.VerifyVector(items_equiped()) &&
            verifier.VerifyVectorOfTables(items_equiped()) &&
+           VerifyOffset(verifier, VT_DIALOGS) &&
+           verifier.VerifyVector(dialogs()) &&
+           verifier.VerifyVectorOfTables(dialogs()) &&
            verifier.EndTable();
   }
 };
@@ -1738,6 +1847,9 @@ struct ClientDataBuilder {
   void add_items_equiped(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::BagItem>>> items_equiped) {
     fbb_.AddOffset(ClientData::VT_ITEMS_EQUIPED, items_equiped);
   }
+  void add_dialogs(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>>> dialogs) {
+    fbb_.AddOffset(ClientData::VT_DIALOGS, dialogs);
+  }
   explicit ClientDataBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -1757,8 +1869,10 @@ inline flatbuffers::Offset<ClientData> CreateClientData(
     GWIPC::GameState game_state = GWIPC::GameState_Unknown,
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Quest>>> quests = 0,
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Bag>>> bags = 0,
-    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::BagItem>>> items_equiped = 0) {
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::BagItem>>> items_equiped = 0,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>>> dialogs = 0) {
   ClientDataBuilder builder_(_fbb);
+  builder_.add_dialogs(dialogs);
   builder_.add_items_equiped(items_equiped);
   builder_.add_bags(bags);
   builder_.add_quests(quests);
@@ -1777,10 +1891,12 @@ inline flatbuffers::Offset<ClientData> CreateClientDataDirect(
     GWIPC::GameState game_state = GWIPC::GameState_Unknown,
     const std::vector<flatbuffers::Offset<GWIPC::Quest>> *quests = nullptr,
     const std::vector<flatbuffers::Offset<GWIPC::Bag>> *bags = nullptr,
-    const std::vector<flatbuffers::Offset<GWIPC::BagItem>> *items_equiped = nullptr) {
+    const std::vector<flatbuffers::Offset<GWIPC::BagItem>> *items_equiped = nullptr,
+    const std::vector<flatbuffers::Offset<GWIPC::GWDialog>> *dialogs = nullptr) {
   auto quests__ = quests ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::Quest>>(*quests) : 0;
   auto bags__ = bags ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::Bag>>(*bags) : 0;
   auto items_equiped__ = items_equiped ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::BagItem>>(*items_equiped) : 0;
+  auto dialogs__ = dialogs ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::GWDialog>>(*dialogs) : 0;
   return GWIPC::CreateClientData(
       _fbb,
       character,
@@ -1789,7 +1905,8 @@ inline flatbuffers::Offset<ClientData> CreateClientDataDirect(
       game_state,
       quests__,
       bags__,
-      items_equiped__);
+      items_equiped__,
+      dialogs__);
 }
 
 inline const GWIPC::ClientData *GetClientData(const void *buf) {

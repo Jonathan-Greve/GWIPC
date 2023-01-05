@@ -177,6 +177,14 @@ table Bag {
   items:[BagItem];
 }
 
+table GWDialog {
+    id:uint32;
+    text:string;
+    skill_id:uint32;
+    button_icon:uint32;
+    time_available_ms:uint32;
+}
+
 table ClientData {
   character:Character;
   instance:Instance;
@@ -185,6 +193,7 @@ table ClientData {
   quests:[Quest];
   bags:[Bag];
   items_equiped:[BagItem];
+  dialogs:[GWDialog];
 }
 
 root_type ClientData;
