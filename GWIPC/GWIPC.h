@@ -9,5 +9,5 @@
 
 namespace GWIPC
 {
-constexpr uint32_t CLIENTDATA_SIZE = 1024 * 16; // Buffer size in bytes;
+constexpr uint32_t CLIENTDATA_SIZE = 1024 * 128; // Buffer size in bytes;
 }
