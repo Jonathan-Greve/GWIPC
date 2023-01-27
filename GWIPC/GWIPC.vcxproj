@@ -83,7 +83,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>.\flatc.exe --cpp clientData.fbs connections.fbs</Command>
+      <Command>.\flatc.exe --cpp clientData.fbs connections.fbs update_options.fbs</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -103,7 +103,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>.\flatc.exe --cpp clientData.fbs connections.fbs</Command>
+      <Command>.\flatc.exe --cpp clientData.fbs connections.fbs update_options.fbs</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -141,6 +141,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SharedMemory.cpp" />
     <ClCompile Include="SharedMemoryLock.cpp" />
+    <ClCompile Include="UpdateOptionsManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="clientData_generated.h" />
@@ -149,10 +150,13 @@
     <ClInclude Include="GWIPC.h" />
     <ClInclude Include="SharedMemory.h" />
     <ClInclude Include="SharedMemoryLock.h" />
+    <ClInclude Include="UpdateOptionsManager.h" />
+    <ClInclude Include="update_options_generated.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="clientData.fbs" />
     <None Include="connections.fbs" />
+    <None Include="update_options.fbs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

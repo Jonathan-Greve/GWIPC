@@ -31,6 +31,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="UpdateOptionsManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SharedMemory.h">
@@ -49,12 +52,21 @@
     <ClInclude Include="clientData_generated.h">
       <Filter>Generated flatbuffer files</Filter>
     </ClInclude>
+    <ClInclude Include="update_options_generated.h">
+      <Filter>Generated flatbuffer files</Filter>
+    </ClInclude>
+    <ClInclude Include="UpdateOptionsManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="connections.fbs">
       <Filter>Flatbuffer schemes</Filter>
     </None>
     <None Include="clientData.fbs">
+      <Filter>Flatbuffer schemes</Filter>
+    </None>
+    <None Include="update_options.fbs">
       <Filter>Flatbuffer schemes</Filter>
     </None>
   </ItemGroup>

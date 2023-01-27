@@ -9,12 +9,14 @@ namespace GWIPC
 class ConnectionManager
 {
 public:
+    // Used by readers
     ConnectionManager()
         : shared_memory_("connections", 1024)
     {
         create_event();
     }
 
+    // Used by writers
     ConnectionManager(const std::string& connection_id)
         : shared_memory_("connections", 1024)
         , connection_id_(connection_id)

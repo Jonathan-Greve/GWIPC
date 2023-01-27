@@ -1,0 +1,8 @@
+namespace GWIPC;
+
+table UpdateOptions {
+    only_send_active_quest_description:bool;
+    only_send_active_quest_objectives:bool;
+}
+
+root_type UpdateOptions;
