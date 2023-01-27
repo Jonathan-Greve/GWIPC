@@ -60,6 +60,14 @@ struct BagBuilder;
 struct GWDialog;
 struct GWDialogBuilder;
 
+struct AdjacentTrapezoidIds;
+
+struct NavMeshTrapezoid;
+struct NavMeshTrapezoidBuilder;
+
+struct NavMesh;
+struct NavMeshBuilder;
+
 struct ClientData;
 struct ClientDataBuilder;
 
@@ -424,6 +432,41 @@ FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Buff FLATBUFFERS_FINAL_CLASS {
   }
 };
 FLATBUFFERS_STRUCT_END(Buff, 12);
+
+FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) AdjacentTrapezoidIds FLATBUFFERS_FINAL_CLASS {
+ private:
+  uint32_t left_id_;
+  uint32_t right_id_;
+  uint32_t up_id_;
+  uint32_t down_id_;
+
+ public:
+  AdjacentTrapezoidIds()
+      : left_id_(0),
+        right_id_(0),
+        up_id_(0),
+        down_id_(0) {
+  }
+  AdjacentTrapezoidIds(uint32_t _left_id, uint32_t _right_id, uint32_t _up_id, uint32_t _down_id)
+      : left_id_(flatbuffers::EndianScalar(_left_id)),
+        right_id_(flatbuffers::EndianScalar(_right_id)),
+        up_id_(flatbuffers::EndianScalar(_up_id)),
+        down_id_(flatbuffers::EndianScalar(_down_id)) {
+  }
+  uint32_t left_id() const {
+    return flatbuffers::EndianScalar(left_id_);
+  }
+  uint32_t right_id() const {
+    return flatbuffers::EndianScalar(right_id_);
+  }
+  uint32_t up_id() const {
+    return flatbuffers::EndianScalar(up_id_);
+  }
+  uint32_t down_id() const {
+    return flatbuffers::EndianScalar(down_id_);
+  }
+};
+FLATBUFFERS_STRUCT_END(AdjacentTrapezoidIds, 16);
 
 struct AgentLiving FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef AgentLivingBuilder Builder;
@@ -1761,6 +1804,159 @@ inline flatbuffers::Offset<GWDialog> CreateGWDialogDirect(
       time_available_ms);
 }
 
+struct NavMeshTrapezoid FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef NavMeshTrapezoidBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_ID = 4,
+    VT_ADJACENT_TRAPEZOID_IDS = 6,
+    VT_TOP_LEFT = 8,
+    VT_TOP_RIGHT = 10,
+    VT_BOTTOM_LEFT = 12,
+    VT_BOTTOM_RIGHT = 14,
+    VT_Z_PLANE = 16
+  };
+  uint32_t id() const {
+    return GetField<uint32_t>(VT_ID, 0);
+  }
+  const GWIPC::AdjacentTrapezoidIds *adjacent_trapezoid_ids() const {
+    return GetStruct<const GWIPC::AdjacentTrapezoidIds *>(VT_ADJACENT_TRAPEZOID_IDS);
+  }
+  const GWIPC::Vec3 *top_left() const {
+    return GetStruct<const GWIPC::Vec3 *>(VT_TOP_LEFT);
+  }
+  const GWIPC::Vec3 *top_right() const {
+    return GetStruct<const GWIPC::Vec3 *>(VT_TOP_RIGHT);
+  }
+  const GWIPC::Vec3 *bottom_left() const {
+    return GetStruct<const GWIPC::Vec3 *>(VT_BOTTOM_LEFT);
+  }
+  const GWIPC::Vec3 *bottom_right() const {
+    return GetStruct<const GWIPC::Vec3 *>(VT_BOTTOM_RIGHT);
+  }
+  uint32_t z_plane() const {
+    return GetField<uint32_t>(VT_Z_PLANE, 0);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_ID, 4) &&
+           VerifyField<GWIPC::AdjacentTrapezoidIds>(verifier, VT_ADJACENT_TRAPEZOID_IDS, 4) &&
+           VerifyField<GWIPC::Vec3>(verifier, VT_TOP_LEFT, 4) &&
+           VerifyField<GWIPC::Vec3>(verifier, VT_TOP_RIGHT, 4) &&
+           VerifyField<GWIPC::Vec3>(verifier, VT_BOTTOM_LEFT, 4) &&
+           VerifyField<GWIPC::Vec3>(verifier, VT_BOTTOM_RIGHT, 4) &&
+           VerifyField<uint32_t>(verifier, VT_Z_PLANE, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct NavMeshTrapezoidBuilder {
+  typedef NavMeshTrapezoid Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_id(uint32_t id) {
+    fbb_.AddElement<uint32_t>(NavMeshTrapezoid::VT_ID, id, 0);
+  }
+  void add_adjacent_trapezoid_ids(const GWIPC::AdjacentTrapezoidIds *adjacent_trapezoid_ids) {
+    fbb_.AddStruct(NavMeshTrapezoid::VT_ADJACENT_TRAPEZOID_IDS, adjacent_trapezoid_ids);
+  }
+  void add_top_left(const GWIPC::Vec3 *top_left) {
+    fbb_.AddStruct(NavMeshTrapezoid::VT_TOP_LEFT, top_left);
+  }
+  void add_top_right(const GWIPC::Vec3 *top_right) {
+    fbb_.AddStruct(NavMeshTrapezoid::VT_TOP_RIGHT, top_right);
+  }
+  void add_bottom_left(const GWIPC::Vec3 *bottom_left) {
+    fbb_.AddStruct(NavMeshTrapezoid::VT_BOTTOM_LEFT, bottom_left);
+  }
+  void add_bottom_right(const GWIPC::Vec3 *bottom_right) {
+    fbb_.AddStruct(NavMeshTrapezoid::VT_BOTTOM_RIGHT, bottom_right);
+  }
+  void add_z_plane(uint32_t z_plane) {
+    fbb_.AddElement<uint32_t>(NavMeshTrapezoid::VT_Z_PLANE, z_plane, 0);
+  }
+  explicit NavMeshTrapezoidBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  flatbuffers::Offset<NavMeshTrapezoid> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<NavMeshTrapezoid>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<NavMeshTrapezoid> CreateNavMeshTrapezoid(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t id = 0,
+    const GWIPC::AdjacentTrapezoidIds *adjacent_trapezoid_ids = nullptr,
+    const GWIPC::Vec3 *top_left = nullptr,
+    const GWIPC::Vec3 *top_right = nullptr,
+    const GWIPC::Vec3 *bottom_left = nullptr,
+    const GWIPC::Vec3 *bottom_right = nullptr,
+    uint32_t z_plane = 0) {
+  NavMeshTrapezoidBuilder builder_(_fbb);
+  builder_.add_z_plane(z_plane);
+  builder_.add_bottom_right(bottom_right);
+  builder_.add_bottom_left(bottom_left);
+  builder_.add_top_right(top_right);
+  builder_.add_top_left(top_left);
+  builder_.add_adjacent_trapezoid_ids(adjacent_trapezoid_ids);
+  builder_.add_id(id);
+  return builder_.Finish();
+}
+
+struct NavMesh FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef NavMeshBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_TRAPEZOIDS = 4
+  };
+  const flatbuffers::Vector<flatbuffers::Offset<GWIPC::NavMeshTrapezoid>> *trapezoids() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::NavMeshTrapezoid>> *>(VT_TRAPEZOIDS);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_TRAPEZOIDS) &&
+           verifier.VerifyVector(trapezoids()) &&
+           verifier.VerifyVectorOfTables(trapezoids()) &&
+           verifier.EndTable();
+  }
+};
+
+struct NavMeshBuilder {
+  typedef NavMesh Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_trapezoids(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::NavMeshTrapezoid>>> trapezoids) {
+    fbb_.AddOffset(NavMesh::VT_TRAPEZOIDS, trapezoids);
+  }
+  explicit NavMeshBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  flatbuffers::Offset<NavMesh> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<NavMesh>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<NavMesh> CreateNavMesh(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::NavMeshTrapezoid>>> trapezoids = 0) {
+  NavMeshBuilder builder_(_fbb);
+  builder_.add_trapezoids(trapezoids);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<NavMesh> CreateNavMeshDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    const std::vector<flatbuffers::Offset<GWIPC::NavMeshTrapezoid>> *trapezoids = nullptr) {
+  auto trapezoids__ = trapezoids ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::NavMeshTrapezoid>>(*trapezoids) : 0;
+  return GWIPC::CreateNavMesh(
+      _fbb,
+      trapezoids__);
+}
+
 struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef ClientDataBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -1771,7 +1967,8 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_QUESTS = 12,
     VT_BAGS = 14,
     VT_ITEMS_EQUIPED = 16,
-    VT_DIALOGS = 18
+    VT_DIALOGS = 18,
+    VT_NAV_MESH = 20
   };
   const GWIPC::Character *character() const {
     return GetPointer<const GWIPC::Character *>(VT_CHARACTER);
@@ -1797,6 +1994,9 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>> *dialogs() const {
     return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>> *>(VT_DIALOGS);
   }
+  const GWIPC::NavMesh *nav_mesh() const {
+    return GetPointer<const GWIPC::NavMesh *>(VT_NAV_MESH);
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyOffset(verifier, VT_CHARACTER) &&
@@ -1818,6 +2018,8 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyOffset(verifier, VT_DIALOGS) &&
            verifier.VerifyVector(dialogs()) &&
            verifier.VerifyVectorOfTables(dialogs()) &&
+           VerifyOffset(verifier, VT_NAV_MESH) &&
+           verifier.VerifyTable(nav_mesh()) &&
            verifier.EndTable();
   }
 };
@@ -1850,6 +2052,9 @@ struct ClientDataBuilder {
   void add_dialogs(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>>> dialogs) {
     fbb_.AddOffset(ClientData::VT_DIALOGS, dialogs);
   }
+  void add_nav_mesh(flatbuffers::Offset<GWIPC::NavMesh> nav_mesh) {
+    fbb_.AddOffset(ClientData::VT_NAV_MESH, nav_mesh);
+  }
   explicit ClientDataBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -1870,8 +2075,10 @@ inline flatbuffers::Offset<ClientData> CreateClientData(
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Quest>>> quests = 0,
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Bag>>> bags = 0,
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::BagItem>>> items_equiped = 0,
-    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>>> dialogs = 0) {
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>>> dialogs = 0,
+    flatbuffers::Offset<GWIPC::NavMesh> nav_mesh = 0) {
   ClientDataBuilder builder_(_fbb);
+  builder_.add_nav_mesh(nav_mesh);
   builder_.add_dialogs(dialogs);
   builder_.add_items_equiped(items_equiped);
   builder_.add_bags(bags);
@@ -1892,7 +2099,8 @@ inline flatbuffers::Offset<ClientData> CreateClientDataDirect(
     const std::vector<flatbuffers::Offset<GWIPC::Quest>> *quests = nullptr,
     const std::vector<flatbuffers::Offset<GWIPC::Bag>> *bags = nullptr,
     const std::vector<flatbuffers::Offset<GWIPC::BagItem>> *items_equiped = nullptr,
-    const std::vector<flatbuffers::Offset<GWIPC::GWDialog>> *dialogs = nullptr) {
+    const std::vector<flatbuffers::Offset<GWIPC::GWDialog>> *dialogs = nullptr,
+    flatbuffers::Offset<GWIPC::NavMesh> nav_mesh = 0) {
   auto quests__ = quests ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::Quest>>(*quests) : 0;
   auto bags__ = bags ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::Bag>>(*bags) : 0;
   auto items_equiped__ = items_equiped ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::BagItem>>(*items_equiped) : 0;
@@ -1906,7 +2114,8 @@ inline flatbuffers::Offset<ClientData> CreateClientDataDirect(
       quests__,
       bags__,
       items_equiped__,
-      dialogs__);
+      dialogs__,
+      nav_mesh);
 }
 
 inline const GWIPC::ClientData *GetClientData(const void *buf) {

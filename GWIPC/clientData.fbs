@@ -185,6 +185,27 @@ table GWDialog {
     time_available_ms:uint32;
 }
 
+struct AdjacentTrapezoidIds{
+    left_id:uint32;
+    right_id:uint32;
+    up_id:uint32;
+    down_id:uint32;
+}
+
+table NavMeshTrapezoid{
+    id:uint32;
+    adjacent_trapezoid_ids:AdjacentTrapezoidIds;
+    top_left:Vec3;
+    top_right:Vec3;
+    bottom_left:Vec3;
+    bottom_right:Vec3;
+    z_plane:uint32;
+}
+
+table NavMesh {
+    trapezoids:[NavMeshTrapezoid];
+}
+
 table ClientData {
   character:Character;
   instance:Instance;
@@ -194,6 +215,7 @@ table ClientData {
   bags:[Bag];
   items_equiped:[BagItem];
   dialogs:[GWDialog];
+  nav_mesh:NavMesh;
 }
 
 root_type ClientData;
