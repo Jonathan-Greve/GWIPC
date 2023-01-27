@@ -435,35 +435,35 @@ FLATBUFFERS_STRUCT_END(Buff, 12);
 
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) AdjacentTrapezoidIds FLATBUFFERS_FINAL_CLASS {
  private:
-  uint32_t left_id_;
-  uint32_t right_id_;
-  uint32_t up_id_;
-  uint32_t down_id_;
+  int32_t left_id_;
+  int32_t right_id_;
+  int32_t down_id_;
+  int32_t up_id_;
 
  public:
   AdjacentTrapezoidIds()
       : left_id_(0),
         right_id_(0),
-        up_id_(0),
-        down_id_(0) {
+        down_id_(0),
+        up_id_(0) {
   }
-  AdjacentTrapezoidIds(uint32_t _left_id, uint32_t _right_id, uint32_t _up_id, uint32_t _down_id)
+  AdjacentTrapezoidIds(int32_t _left_id, int32_t _right_id, int32_t _down_id, int32_t _up_id)
       : left_id_(flatbuffers::EndianScalar(_left_id)),
         right_id_(flatbuffers::EndianScalar(_right_id)),
-        up_id_(flatbuffers::EndianScalar(_up_id)),
-        down_id_(flatbuffers::EndianScalar(_down_id)) {
+        down_id_(flatbuffers::EndianScalar(_down_id)),
+        up_id_(flatbuffers::EndianScalar(_up_id)) {
   }
-  uint32_t left_id() const {
+  int32_t left_id() const {
     return flatbuffers::EndianScalar(left_id_);
   }
-  uint32_t right_id() const {
+  int32_t right_id() const {
     return flatbuffers::EndianScalar(right_id_);
   }
-  uint32_t up_id() const {
-    return flatbuffers::EndianScalar(up_id_);
-  }
-  uint32_t down_id() const {
+  int32_t down_id() const {
     return flatbuffers::EndianScalar(down_id_);
+  }
+  int32_t up_id() const {
+    return flatbuffers::EndianScalar(up_id_);
   }
 };
 FLATBUFFERS_STRUCT_END(AdjacentTrapezoidIds, 16);

@@ -186,10 +186,10 @@ table GWDialog {
 }
 
 struct AdjacentTrapezoidIds{
-    left_id:uint32;
-    right_id:uint32;
-    up_id:uint32;
-    down_id:uint32;
+    left_id:int32;
+    right_id:int32;
+    down_id:int32;
+    up_id:int32;
 }
 
 table NavMeshTrapezoid{
