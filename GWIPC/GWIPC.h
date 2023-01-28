@@ -8,6 +8,7 @@
 #include "connections_generated.h"
 #include "clientData_generated.h"
 #include "update_options_generated.h"
+#include "nav_mesh_generated.h"
 
 namespace GWIPC
 {

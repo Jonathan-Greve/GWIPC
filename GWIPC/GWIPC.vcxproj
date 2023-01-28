@@ -83,7 +83,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>.\flatc.exe --cpp clientData.fbs connections.fbs update_options.fbs</Command>
+      <Command>.\flatc.exe --cpp clientData.fbs connections.fbs update_options.fbs nav_mesh.fbs</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -103,7 +103,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>.\flatc.exe --cpp clientData.fbs connections.fbs update_options.fbs</Command>
+      <Command>.\flatc.exe --cpp clientData.fbs connections.fbs update_options.fbs nav_mesh.fbs</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -148,6 +148,8 @@
     <ClInclude Include="ConnectionManager.h" />
     <ClInclude Include="connections_generated.h" />
     <ClInclude Include="GWIPC.h" />
+    <ClInclude Include="nav_mesh.fbs" />
+    <ClInclude Include="nav_mesh_generated.h" />
     <ClInclude Include="SharedMemory.h" />
     <ClInclude Include="SharedMemoryLock.h" />
     <ClInclude Include="UpdateOptionsManager.h" />

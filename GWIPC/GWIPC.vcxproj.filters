@@ -58,6 +58,12 @@
     <ClInclude Include="UpdateOptionsManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="nav_mesh.fbs">
+      <Filter>Flatbuffer schemes</Filter>
+    </ClInclude>
+    <ClInclude Include="nav_mesh_generated.h">
+      <Filter>Generated flatbuffer files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="connections.fbs">

@@ -1,0 +1,26 @@
+include "clientData.fbs";
+
+namespace GWIPC;
+
+struct AdjacentTrapezoidIds{
+    left_id:int32;
+    right_id:int32;
+    down_id:int32;
+    up_id:int32;
+}
+
+table NavMeshTrapezoid{
+    id:uint32;
+    adjacent_trapezoid_ids:AdjacentTrapezoidIds;
+    top_left:Vec3;
+    top_right:Vec3;
+    bottom_left:Vec3;
+    bottom_right:Vec3;
+    z_plane:uint32;
+}
+
+table NavMesh {
+    trapezoids:[NavMeshTrapezoid];
+}
+
+root_type NavMesh;
