@@ -194,7 +194,7 @@ table ClientData {
   bags:[Bag];
   items_equiped:[BagItem];
   dialogs:[GWDialog];
-  nav_mesh_file_path:String;
+  nav_mesh_file_path:string;
 }
 
 root_type ClientData;
