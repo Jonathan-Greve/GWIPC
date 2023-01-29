@@ -181,7 +181,7 @@ table GWDialog {
     id:uint32;
     text:string;
     skill_id:uint32;
-    button_icon:uint32;
+    button_icon_id:uint32;
     time_available_ms:uint32;
 }
 
@@ -194,6 +194,7 @@ table ClientData {
   bags:[Bag];
   items_equiped:[BagItem];
   dialogs:[GWDialog];
+  last_dialog_id:uint32;
   nav_mesh_file_path:string;
 }
 

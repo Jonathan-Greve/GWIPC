@@ -1668,7 +1668,7 @@ struct GWDialog FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_ID = 4,
     VT_TEXT = 6,
     VT_SKILL_ID = 8,
-    VT_BUTTON_ICON = 10,
+    VT_BUTTON_ICON_ID = 10,
     VT_TIME_AVAILABLE_MS = 12
   };
   uint32_t id() const {
@@ -1680,8 +1680,8 @@ struct GWDialog FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   uint32_t skill_id() const {
     return GetField<uint32_t>(VT_SKILL_ID, 0);
   }
-  uint32_t button_icon() const {
-    return GetField<uint32_t>(VT_BUTTON_ICON, 0);
+  uint32_t button_icon_id() const {
+    return GetField<uint32_t>(VT_BUTTON_ICON_ID, 0);
   }
   uint32_t time_available_ms() const {
     return GetField<uint32_t>(VT_TIME_AVAILABLE_MS, 0);
@@ -1692,7 +1692,7 @@ struct GWDialog FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyOffset(verifier, VT_TEXT) &&
            verifier.VerifyString(text()) &&
            VerifyField<uint32_t>(verifier, VT_SKILL_ID, 4) &&
-           VerifyField<uint32_t>(verifier, VT_BUTTON_ICON, 4) &&
+           VerifyField<uint32_t>(verifier, VT_BUTTON_ICON_ID, 4) &&
            VerifyField<uint32_t>(verifier, VT_TIME_AVAILABLE_MS, 4) &&
            verifier.EndTable();
   }
@@ -1711,8 +1711,8 @@ struct GWDialogBuilder {
   void add_skill_id(uint32_t skill_id) {
     fbb_.AddElement<uint32_t>(GWDialog::VT_SKILL_ID, skill_id, 0);
   }
-  void add_button_icon(uint32_t button_icon) {
-    fbb_.AddElement<uint32_t>(GWDialog::VT_BUTTON_ICON, button_icon, 0);
+  void add_button_icon_id(uint32_t button_icon_id) {
+    fbb_.AddElement<uint32_t>(GWDialog::VT_BUTTON_ICON_ID, button_icon_id, 0);
   }
   void add_time_available_ms(uint32_t time_available_ms) {
     fbb_.AddElement<uint32_t>(GWDialog::VT_TIME_AVAILABLE_MS, time_available_ms, 0);
@@ -1733,11 +1733,11 @@ inline flatbuffers::Offset<GWDialog> CreateGWDialog(
     uint32_t id = 0,
     flatbuffers::Offset<flatbuffers::String> text = 0,
     uint32_t skill_id = 0,
-    uint32_t button_icon = 0,
+    uint32_t button_icon_id = 0,
     uint32_t time_available_ms = 0) {
   GWDialogBuilder builder_(_fbb);
   builder_.add_time_available_ms(time_available_ms);
-  builder_.add_button_icon(button_icon);
+  builder_.add_button_icon_id(button_icon_id);
   builder_.add_skill_id(skill_id);
   builder_.add_text(text);
   builder_.add_id(id);
@@ -1749,7 +1749,7 @@ inline flatbuffers::Offset<GWDialog> CreateGWDialogDirect(
     uint32_t id = 0,
     const char *text = nullptr,
     uint32_t skill_id = 0,
-    uint32_t button_icon = 0,
+    uint32_t button_icon_id = 0,
     uint32_t time_available_ms = 0) {
   auto text__ = text ? _fbb.CreateString(text) : 0;
   return GWIPC::CreateGWDialog(
@@ -1757,7 +1757,7 @@ inline flatbuffers::Offset<GWDialog> CreateGWDialogDirect(
       id,
       text__,
       skill_id,
-      button_icon,
+      button_icon_id,
       time_available_ms);
 }
 
@@ -1772,7 +1772,8 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_BAGS = 14,
     VT_ITEMS_EQUIPED = 16,
     VT_DIALOGS = 18,
-    VT_NAV_MESH_FILE_PATH = 20
+    VT_LAST_DIALOG_ID = 20,
+    VT_NAV_MESH_FILE_PATH = 22
   };
   const GWIPC::Character *character() const {
     return GetPointer<const GWIPC::Character *>(VT_CHARACTER);
@@ -1798,6 +1799,9 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>> *dialogs() const {
     return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>> *>(VT_DIALOGS);
   }
+  uint32_t last_dialog_id() const {
+    return GetField<uint32_t>(VT_LAST_DIALOG_ID, 0);
+  }
   const flatbuffers::String *nav_mesh_file_path() const {
     return GetPointer<const flatbuffers::String *>(VT_NAV_MESH_FILE_PATH);
   }
@@ -1822,6 +1826,7 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyOffset(verifier, VT_DIALOGS) &&
            verifier.VerifyVector(dialogs()) &&
            verifier.VerifyVectorOfTables(dialogs()) &&
+           VerifyField<uint32_t>(verifier, VT_LAST_DIALOG_ID, 4) &&
            VerifyOffset(verifier, VT_NAV_MESH_FILE_PATH) &&
            verifier.VerifyString(nav_mesh_file_path()) &&
            verifier.EndTable();
@@ -1856,6 +1861,9 @@ struct ClientDataBuilder {
   void add_dialogs(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>>> dialogs) {
     fbb_.AddOffset(ClientData::VT_DIALOGS, dialogs);
   }
+  void add_last_dialog_id(uint32_t last_dialog_id) {
+    fbb_.AddElement<uint32_t>(ClientData::VT_LAST_DIALOG_ID, last_dialog_id, 0);
+  }
   void add_nav_mesh_file_path(flatbuffers::Offset<flatbuffers::String> nav_mesh_file_path) {
     fbb_.AddOffset(ClientData::VT_NAV_MESH_FILE_PATH, nav_mesh_file_path);
   }
@@ -1880,9 +1888,11 @@ inline flatbuffers::Offset<ClientData> CreateClientData(
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Bag>>> bags = 0,
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::BagItem>>> items_equiped = 0,
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>>> dialogs = 0,
+    uint32_t last_dialog_id = 0,
     flatbuffers::Offset<flatbuffers::String> nav_mesh_file_path = 0) {
   ClientDataBuilder builder_(_fbb);
   builder_.add_nav_mesh_file_path(nav_mesh_file_path);
+  builder_.add_last_dialog_id(last_dialog_id);
   builder_.add_dialogs(dialogs);
   builder_.add_items_equiped(items_equiped);
   builder_.add_bags(bags);
@@ -1904,6 +1914,7 @@ inline flatbuffers::Offset<ClientData> CreateClientDataDirect(
     const std::vector<flatbuffers::Offset<GWIPC::Bag>> *bags = nullptr,
     const std::vector<flatbuffers::Offset<GWIPC::BagItem>> *items_equiped = nullptr,
     const std::vector<flatbuffers::Offset<GWIPC::GWDialog>> *dialogs = nullptr,
+    uint32_t last_dialog_id = 0,
     const char *nav_mesh_file_path = nullptr) {
   auto quests__ = quests ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::Quest>>(*quests) : 0;
   auto bags__ = bags ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::Bag>>(*bags) : 0;
@@ -1920,6 +1931,7 @@ inline flatbuffers::Offset<ClientData> CreateClientDataDirect(
       bags__,
       items_equiped__,
       dialogs__,
+      last_dialog_id,
       nav_mesh_file_path__);
 }
 
