@@ -60,6 +60,9 @@ struct BagBuilder;
 struct GWDialog;
 struct GWDialogBuilder;
 
+struct GWDialogs;
+struct GWDialogsBuilder;
+
 struct ClientData;
 struct ClientDataBuilder;
 
@@ -1761,6 +1764,82 @@ inline flatbuffers::Offset<GWDialog> CreateGWDialogDirect(
       time_available_ms);
 }
 
+struct GWDialogs FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef GWDialogsBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_DIALOGS = 4,
+    VT_LAST_DIALOG_ID = 6,
+    VT_LAST_DIALOG_AGENT_ID = 8
+  };
+  const flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>> *dialogs() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>> *>(VT_DIALOGS);
+  }
+  uint32_t last_dialog_id() const {
+    return GetField<uint32_t>(VT_LAST_DIALOG_ID, 0);
+  }
+  uint32_t last_dialog_agent_id() const {
+    return GetField<uint32_t>(VT_LAST_DIALOG_AGENT_ID, 0);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_DIALOGS) &&
+           verifier.VerifyVector(dialogs()) &&
+           verifier.VerifyVectorOfTables(dialogs()) &&
+           VerifyField<uint32_t>(verifier, VT_LAST_DIALOG_ID, 4) &&
+           VerifyField<uint32_t>(verifier, VT_LAST_DIALOG_AGENT_ID, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct GWDialogsBuilder {
+  typedef GWDialogs Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_dialogs(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>>> dialogs) {
+    fbb_.AddOffset(GWDialogs::VT_DIALOGS, dialogs);
+  }
+  void add_last_dialog_id(uint32_t last_dialog_id) {
+    fbb_.AddElement<uint32_t>(GWDialogs::VT_LAST_DIALOG_ID, last_dialog_id, 0);
+  }
+  void add_last_dialog_agent_id(uint32_t last_dialog_agent_id) {
+    fbb_.AddElement<uint32_t>(GWDialogs::VT_LAST_DIALOG_AGENT_ID, last_dialog_agent_id, 0);
+  }
+  explicit GWDialogsBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  flatbuffers::Offset<GWDialogs> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<GWDialogs>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<GWDialogs> CreateGWDialogs(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>>> dialogs = 0,
+    uint32_t last_dialog_id = 0,
+    uint32_t last_dialog_agent_id = 0) {
+  GWDialogsBuilder builder_(_fbb);
+  builder_.add_last_dialog_agent_id(last_dialog_agent_id);
+  builder_.add_last_dialog_id(last_dialog_id);
+  builder_.add_dialogs(dialogs);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<GWDialogs> CreateGWDialogsDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    const std::vector<flatbuffers::Offset<GWIPC::GWDialog>> *dialogs = nullptr,
+    uint32_t last_dialog_id = 0,
+    uint32_t last_dialog_agent_id = 0) {
+  auto dialogs__ = dialogs ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::GWDialog>>(*dialogs) : 0;
+  return GWIPC::CreateGWDialogs(
+      _fbb,
+      dialogs__,
+      last_dialog_id,
+      last_dialog_agent_id);
+}
+
 struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef ClientDataBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -1772,8 +1851,7 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_BAGS = 14,
     VT_ITEMS_EQUIPED = 16,
     VT_DIALOGS = 18,
-    VT_LAST_DIALOG_ID = 20,
-    VT_NAV_MESH_FILE_PATH = 22
+    VT_NAV_MESH_FILE_PATH = 20
   };
   const GWIPC::Character *character() const {
     return GetPointer<const GWIPC::Character *>(VT_CHARACTER);
@@ -1796,11 +1874,8 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const flatbuffers::Vector<flatbuffers::Offset<GWIPC::BagItem>> *items_equiped() const {
     return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::BagItem>> *>(VT_ITEMS_EQUIPED);
   }
-  const flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>> *dialogs() const {
-    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>> *>(VT_DIALOGS);
-  }
-  uint32_t last_dialog_id() const {
-    return GetField<uint32_t>(VT_LAST_DIALOG_ID, 0);
+  const GWIPC::GWDialogs *dialogs() const {
+    return GetPointer<const GWIPC::GWDialogs *>(VT_DIALOGS);
   }
   const flatbuffers::String *nav_mesh_file_path() const {
     return GetPointer<const flatbuffers::String *>(VT_NAV_MESH_FILE_PATH);
@@ -1824,9 +1899,7 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            verifier.VerifyVector(items_equiped()) &&
            verifier.VerifyVectorOfTables(items_equiped()) &&
            VerifyOffset(verifier, VT_DIALOGS) &&
-           verifier.VerifyVector(dialogs()) &&
-           verifier.VerifyVectorOfTables(dialogs()) &&
-           VerifyField<uint32_t>(verifier, VT_LAST_DIALOG_ID, 4) &&
+           verifier.VerifyTable(dialogs()) &&
            VerifyOffset(verifier, VT_NAV_MESH_FILE_PATH) &&
            verifier.VerifyString(nav_mesh_file_path()) &&
            verifier.EndTable();
@@ -1858,11 +1931,8 @@ struct ClientDataBuilder {
   void add_items_equiped(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::BagItem>>> items_equiped) {
     fbb_.AddOffset(ClientData::VT_ITEMS_EQUIPED, items_equiped);
   }
-  void add_dialogs(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>>> dialogs) {
+  void add_dialogs(flatbuffers::Offset<GWIPC::GWDialogs> dialogs) {
     fbb_.AddOffset(ClientData::VT_DIALOGS, dialogs);
-  }
-  void add_last_dialog_id(uint32_t last_dialog_id) {
-    fbb_.AddElement<uint32_t>(ClientData::VT_LAST_DIALOG_ID, last_dialog_id, 0);
   }
   void add_nav_mesh_file_path(flatbuffers::Offset<flatbuffers::String> nav_mesh_file_path) {
     fbb_.AddOffset(ClientData::VT_NAV_MESH_FILE_PATH, nav_mesh_file_path);
@@ -1887,12 +1957,10 @@ inline flatbuffers::Offset<ClientData> CreateClientData(
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Quest>>> quests = 0,
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Bag>>> bags = 0,
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::BagItem>>> items_equiped = 0,
-    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>>> dialogs = 0,
-    uint32_t last_dialog_id = 0,
+    flatbuffers::Offset<GWIPC::GWDialogs> dialogs = 0,
     flatbuffers::Offset<flatbuffers::String> nav_mesh_file_path = 0) {
   ClientDataBuilder builder_(_fbb);
   builder_.add_nav_mesh_file_path(nav_mesh_file_path);
-  builder_.add_last_dialog_id(last_dialog_id);
   builder_.add_dialogs(dialogs);
   builder_.add_items_equiped(items_equiped);
   builder_.add_bags(bags);
@@ -1913,13 +1981,11 @@ inline flatbuffers::Offset<ClientData> CreateClientDataDirect(
     const std::vector<flatbuffers::Offset<GWIPC::Quest>> *quests = nullptr,
     const std::vector<flatbuffers::Offset<GWIPC::Bag>> *bags = nullptr,
     const std::vector<flatbuffers::Offset<GWIPC::BagItem>> *items_equiped = nullptr,
-    const std::vector<flatbuffers::Offset<GWIPC::GWDialog>> *dialogs = nullptr,
-    uint32_t last_dialog_id = 0,
+    flatbuffers::Offset<GWIPC::GWDialogs> dialogs = 0,
     const char *nav_mesh_file_path = nullptr) {
   auto quests__ = quests ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::Quest>>(*quests) : 0;
   auto bags__ = bags ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::Bag>>(*bags) : 0;
   auto items_equiped__ = items_equiped ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::BagItem>>(*items_equiped) : 0;
-  auto dialogs__ = dialogs ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::GWDialog>>(*dialogs) : 0;
   auto nav_mesh_file_path__ = nav_mesh_file_path ? _fbb.CreateString(nav_mesh_file_path) : 0;
   return GWIPC::CreateClientData(
       _fbb,
@@ -1930,8 +1996,7 @@ inline flatbuffers::Offset<ClientData> CreateClientDataDirect(
       quests__,
       bags__,
       items_equiped__,
-      dialogs__,
-      last_dialog_id,
+      dialogs,
       nav_mesh_file_path__);
 }
 
