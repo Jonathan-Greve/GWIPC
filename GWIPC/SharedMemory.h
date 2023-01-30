@@ -40,14 +40,14 @@ public:
         }
     }
 
-    ~SharedMemory() { terminate(); }
-
-    void terminate()
+    ~SharedMemory()
     {
         UnmapViewOfFile(data_);
         CloseHandle(mapping_);
         CloseHandle(mutex_);
     }
+
+    void terminate() { }
 
     void write_data(uint8_t* new_data, uint32_t new_data_size)
     {
