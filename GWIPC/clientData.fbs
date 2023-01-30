@@ -182,10 +182,9 @@ table GWDialog {
     text:string;
     skill_id:uint32;
     button_icon_id:uint32;
-    time_available_ms:uint32;
 }
 
-table GWDialogs {
+table DialogsInfo {
   dialogs:[GWDialog];
   last_dialog_id:uint32;
   last_dialog_agent_id:uint32;
@@ -199,7 +198,7 @@ table ClientData {
   quests:[Quest];
   bags:[Bag];
   items_equiped:[BagItem];
-  dialogs:GWDialogs;
+  dialogs_info:DialogsInfo;
   nav_mesh_file_path:string;
 }
 
