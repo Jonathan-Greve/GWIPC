@@ -40,6 +40,8 @@ public:
         }
     }
 
+    ~SharedMemory() { terminate(); }
+
     void terminate()
     {
         UnmapViewOfFile(data_);
