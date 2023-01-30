@@ -1757,13 +1757,17 @@ struct DialogsInfo FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_DIALOGS = 4,
     VT_LAST_DIALOG_ID = 6,
-    VT_LAST_DIALOG_AGENT_ID = 8
+    VT_CURRENT_DIALOG_AGENT_ID = 8,
+    VT_LAST_DIALOG_AGENT_ID = 10
   };
   const flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>> *dialogs() const {
     return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>> *>(VT_DIALOGS);
   }
   uint32_t last_dialog_id() const {
     return GetField<uint32_t>(VT_LAST_DIALOG_ID, 0);
+  }
+  uint32_t current_dialog_agent_id() const {
+    return GetField<uint32_t>(VT_CURRENT_DIALOG_AGENT_ID, 0);
   }
   uint32_t last_dialog_agent_id() const {
     return GetField<uint32_t>(VT_LAST_DIALOG_AGENT_ID, 0);
@@ -1774,6 +1778,7 @@ struct DialogsInfo FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            verifier.VerifyVector(dialogs()) &&
            verifier.VerifyVectorOfTables(dialogs()) &&
            VerifyField<uint32_t>(verifier, VT_LAST_DIALOG_ID, 4) &&
+           VerifyField<uint32_t>(verifier, VT_CURRENT_DIALOG_AGENT_ID, 4) &&
            VerifyField<uint32_t>(verifier, VT_LAST_DIALOG_AGENT_ID, 4) &&
            verifier.EndTable();
   }
@@ -1788,6 +1793,9 @@ struct DialogsInfoBuilder {
   }
   void add_last_dialog_id(uint32_t last_dialog_id) {
     fbb_.AddElement<uint32_t>(DialogsInfo::VT_LAST_DIALOG_ID, last_dialog_id, 0);
+  }
+  void add_current_dialog_agent_id(uint32_t current_dialog_agent_id) {
+    fbb_.AddElement<uint32_t>(DialogsInfo::VT_CURRENT_DIALOG_AGENT_ID, current_dialog_agent_id, 0);
   }
   void add_last_dialog_agent_id(uint32_t last_dialog_agent_id) {
     fbb_.AddElement<uint32_t>(DialogsInfo::VT_LAST_DIALOG_AGENT_ID, last_dialog_agent_id, 0);
@@ -1807,9 +1815,11 @@ inline flatbuffers::Offset<DialogsInfo> CreateDialogsInfo(
     flatbuffers::FlatBufferBuilder &_fbb,
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::GWDialog>>> dialogs = 0,
     uint32_t last_dialog_id = 0,
+    uint32_t current_dialog_agent_id = 0,
     uint32_t last_dialog_agent_id = 0) {
   DialogsInfoBuilder builder_(_fbb);
   builder_.add_last_dialog_agent_id(last_dialog_agent_id);
+  builder_.add_current_dialog_agent_id(current_dialog_agent_id);
   builder_.add_last_dialog_id(last_dialog_id);
   builder_.add_dialogs(dialogs);
   return builder_.Finish();
@@ -1819,12 +1829,14 @@ inline flatbuffers::Offset<DialogsInfo> CreateDialogsInfoDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
     const std::vector<flatbuffers::Offset<GWIPC::GWDialog>> *dialogs = nullptr,
     uint32_t last_dialog_id = 0,
+    uint32_t current_dialog_agent_id = 0,
     uint32_t last_dialog_agent_id = 0) {
   auto dialogs__ = dialogs ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::GWDialog>>(*dialogs) : 0;
   return GWIPC::CreateDialogsInfo(
       _fbb,
       dialogs__,
       last_dialog_id,
+      current_dialog_agent_id,
       last_dialog_agent_id);
 }
 

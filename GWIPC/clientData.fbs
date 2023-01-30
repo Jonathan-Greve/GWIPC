@@ -187,6 +187,7 @@ table GWDialog {
 table DialogsInfo {
   dialogs:[GWDialog];
   last_dialog_id:uint32;
+  current_dialog_agent_id:uint32;
   last_dialog_agent_id:uint32;
 }
 
