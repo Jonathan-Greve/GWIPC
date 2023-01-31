@@ -63,6 +63,15 @@ struct GWDialogBuilder;
 struct DialogsInfo;
 struct DialogsInfoBuilder;
 
+struct AgentItem;
+struct AgentItemBuilder;
+
+struct AgentGadget;
+struct AgentGadgetBuilder;
+
+struct Enemy;
+struct EnemyBuilder;
+
 struct ClientData;
 struct ClientDataBuilder;
 
@@ -1225,8 +1234,9 @@ struct Party FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_PLAYER_MEMBERS = 6,
     VT_HERO_MEMBERS = 8,
     VT_HENCHMAN_MEMBERS = 10,
-    VT_FLAG_ALL_POSITION = 12,
-    VT_MISSION_OBJECTIVES = 14
+    VT_EXTRA_NPC_MEMBERS = 12,
+    VT_FLAG_ALL_POSITION = 14,
+    VT_MISSION_OBJECTIVES = 16
   };
   uint32_t party_id() const {
     return GetField<uint32_t>(VT_PARTY_ID, 0);
@@ -1239,6 +1249,9 @@ struct Party FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   }
   const flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentLiving>> *henchman_members() const {
     return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentLiving>> *>(VT_HENCHMAN_MEMBERS);
+  }
+  const flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentLiving>> *extra_npc_members() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentLiving>> *>(VT_EXTRA_NPC_MEMBERS);
   }
   const GWIPC::Vec3 *flag_all_position() const {
     return GetStruct<const GWIPC::Vec3 *>(VT_FLAG_ALL_POSITION);
@@ -1258,6 +1271,9 @@ struct Party FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyOffset(verifier, VT_HENCHMAN_MEMBERS) &&
            verifier.VerifyVector(henchman_members()) &&
            verifier.VerifyVectorOfTables(henchman_members()) &&
+           VerifyOffset(verifier, VT_EXTRA_NPC_MEMBERS) &&
+           verifier.VerifyVector(extra_npc_members()) &&
+           verifier.VerifyVectorOfTables(extra_npc_members()) &&
            VerifyField<GWIPC::Vec3>(verifier, VT_FLAG_ALL_POSITION, 4) &&
            VerifyOffset(verifier, VT_MISSION_OBJECTIVES) &&
            verifier.VerifyVector(mission_objectives()) &&
@@ -1282,6 +1298,9 @@ struct PartyBuilder {
   void add_henchman_members(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentLiving>>> henchman_members) {
     fbb_.AddOffset(Party::VT_HENCHMAN_MEMBERS, henchman_members);
   }
+  void add_extra_npc_members(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentLiving>>> extra_npc_members) {
+    fbb_.AddOffset(Party::VT_EXTRA_NPC_MEMBERS, extra_npc_members);
+  }
   void add_flag_all_position(const GWIPC::Vec3 *flag_all_position) {
     fbb_.AddStruct(Party::VT_FLAG_ALL_POSITION, flag_all_position);
   }
@@ -1305,11 +1324,13 @@ inline flatbuffers::Offset<Party> CreateParty(
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentLiving>>> player_members = 0,
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Hero>>> hero_members = 0,
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentLiving>>> henchman_members = 0,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentLiving>>> extra_npc_members = 0,
     const GWIPC::Vec3 *flag_all_position = nullptr,
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::MissionObjective>>> mission_objectives = 0) {
   PartyBuilder builder_(_fbb);
   builder_.add_mission_objectives(mission_objectives);
   builder_.add_flag_all_position(flag_all_position);
+  builder_.add_extra_npc_members(extra_npc_members);
   builder_.add_henchman_members(henchman_members);
   builder_.add_hero_members(hero_members);
   builder_.add_player_members(player_members);
@@ -1323,11 +1344,13 @@ inline flatbuffers::Offset<Party> CreatePartyDirect(
     const std::vector<flatbuffers::Offset<GWIPC::AgentLiving>> *player_members = nullptr,
     const std::vector<flatbuffers::Offset<GWIPC::Hero>> *hero_members = nullptr,
     const std::vector<flatbuffers::Offset<GWIPC::AgentLiving>> *henchman_members = nullptr,
+    const std::vector<flatbuffers::Offset<GWIPC::AgentLiving>> *extra_npc_members = nullptr,
     const GWIPC::Vec3 *flag_all_position = nullptr,
     const std::vector<flatbuffers::Offset<GWIPC::MissionObjective>> *mission_objectives = nullptr) {
   auto player_members__ = player_members ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::AgentLiving>>(*player_members) : 0;
   auto hero_members__ = hero_members ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::Hero>>(*hero_members) : 0;
   auto henchman_members__ = henchman_members ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::AgentLiving>>(*henchman_members) : 0;
+  auto extra_npc_members__ = extra_npc_members ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::AgentLiving>>(*extra_npc_members) : 0;
   auto mission_objectives__ = mission_objectives ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::MissionObjective>>(*mission_objectives) : 0;
   return GWIPC::CreateParty(
       _fbb,
@@ -1335,6 +1358,7 @@ inline flatbuffers::Offset<Party> CreatePartyDirect(
       player_members__,
       hero_members__,
       henchman_members__,
+      extra_npc_members__,
       flag_all_position,
       mission_objectives__);
 }
@@ -1840,6 +1864,180 @@ inline flatbuffers::Offset<DialogsInfo> CreateDialogsInfoDirect(
       last_dialog_agent_id);
 }
 
+struct AgentItem FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef AgentItemBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_AGENT = 4,
+    VT_OWNER_AGENT_ID = 6,
+    VT_ITEM_ID = 8,
+    VT_EXTRA_TYPE = 10
+  };
+  const GWIPC::Agent *agent() const {
+    return GetStruct<const GWIPC::Agent *>(VT_AGENT);
+  }
+  uint32_t owner_agent_id() const {
+    return GetField<uint32_t>(VT_OWNER_AGENT_ID, 0);
+  }
+  uint32_t item_id() const {
+    return GetField<uint32_t>(VT_ITEM_ID, 0);
+  }
+  uint32_t extra_type() const {
+    return GetField<uint32_t>(VT_EXTRA_TYPE, 0);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<GWIPC::Agent>(verifier, VT_AGENT, 4) &&
+           VerifyField<uint32_t>(verifier, VT_OWNER_AGENT_ID, 4) &&
+           VerifyField<uint32_t>(verifier, VT_ITEM_ID, 4) &&
+           VerifyField<uint32_t>(verifier, VT_EXTRA_TYPE, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct AgentItemBuilder {
+  typedef AgentItem Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_agent(const GWIPC::Agent *agent) {
+    fbb_.AddStruct(AgentItem::VT_AGENT, agent);
+  }
+  void add_owner_agent_id(uint32_t owner_agent_id) {
+    fbb_.AddElement<uint32_t>(AgentItem::VT_OWNER_AGENT_ID, owner_agent_id, 0);
+  }
+  void add_item_id(uint32_t item_id) {
+    fbb_.AddElement<uint32_t>(AgentItem::VT_ITEM_ID, item_id, 0);
+  }
+  void add_extra_type(uint32_t extra_type) {
+    fbb_.AddElement<uint32_t>(AgentItem::VT_EXTRA_TYPE, extra_type, 0);
+  }
+  explicit AgentItemBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  flatbuffers::Offset<AgentItem> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<AgentItem>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<AgentItem> CreateAgentItem(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    const GWIPC::Agent *agent = nullptr,
+    uint32_t owner_agent_id = 0,
+    uint32_t item_id = 0,
+    uint32_t extra_type = 0) {
+  AgentItemBuilder builder_(_fbb);
+  builder_.add_extra_type(extra_type);
+  builder_.add_item_id(item_id);
+  builder_.add_owner_agent_id(owner_agent_id);
+  builder_.add_agent(agent);
+  return builder_.Finish();
+}
+
+struct AgentGadget FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef AgentGadgetBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_AGENT = 4,
+    VT_EXTRA_TYPE = 6,
+    VT_GADGET_ID = 8
+  };
+  const GWIPC::Agent *agent() const {
+    return GetStruct<const GWIPC::Agent *>(VT_AGENT);
+  }
+  uint32_t extra_type() const {
+    return GetField<uint32_t>(VT_EXTRA_TYPE, 0);
+  }
+  uint32_t gadget_id() const {
+    return GetField<uint32_t>(VT_GADGET_ID, 0);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<GWIPC::Agent>(verifier, VT_AGENT, 4) &&
+           VerifyField<uint32_t>(verifier, VT_EXTRA_TYPE, 4) &&
+           VerifyField<uint32_t>(verifier, VT_GADGET_ID, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct AgentGadgetBuilder {
+  typedef AgentGadget Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_agent(const GWIPC::Agent *agent) {
+    fbb_.AddStruct(AgentGadget::VT_AGENT, agent);
+  }
+  void add_extra_type(uint32_t extra_type) {
+    fbb_.AddElement<uint32_t>(AgentGadget::VT_EXTRA_TYPE, extra_type, 0);
+  }
+  void add_gadget_id(uint32_t gadget_id) {
+    fbb_.AddElement<uint32_t>(AgentGadget::VT_GADGET_ID, gadget_id, 0);
+  }
+  explicit AgentGadgetBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  flatbuffers::Offset<AgentGadget> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<AgentGadget>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<AgentGadget> CreateAgentGadget(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    const GWIPC::Agent *agent = nullptr,
+    uint32_t extra_type = 0,
+    uint32_t gadget_id = 0) {
+  AgentGadgetBuilder builder_(_fbb);
+  builder_.add_gadget_id(gadget_id);
+  builder_.add_extra_type(extra_type);
+  builder_.add_agent(agent);
+  return builder_.Finish();
+}
+
+struct Enemy FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef EnemyBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_AGENT_LIVING = 4
+  };
+  const GWIPC::AgentLiving *agent_living() const {
+    return GetPointer<const GWIPC::AgentLiving *>(VT_AGENT_LIVING);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_AGENT_LIVING) &&
+           verifier.VerifyTable(agent_living()) &&
+           verifier.EndTable();
+  }
+};
+
+struct EnemyBuilder {
+  typedef Enemy Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_agent_living(flatbuffers::Offset<GWIPC::AgentLiving> agent_living) {
+    fbb_.AddOffset(Enemy::VT_AGENT_LIVING, agent_living);
+  }
+  explicit EnemyBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  flatbuffers::Offset<Enemy> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<Enemy>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<Enemy> CreateEnemy(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    flatbuffers::Offset<GWIPC::AgentLiving> agent_living = 0) {
+  EnemyBuilder builder_(_fbb);
+  builder_.add_agent_living(agent_living);
+  return builder_.Finish();
+}
+
 struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef ClientDataBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -1851,7 +2049,10 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_BAGS = 14,
     VT_ITEMS_EQUIPED = 16,
     VT_DIALOGS_INFO = 18,
-    VT_NAV_MESH_FILE_PATH = 20
+    VT_NAV_MESH_FILE_PATH = 20,
+    VT_ITEMS = 22,
+    VT_GADGETS = 24,
+    VT_ENEMIES = 26
   };
   const GWIPC::Character *character() const {
     return GetPointer<const GWIPC::Character *>(VT_CHARACTER);
@@ -1880,6 +2081,15 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const flatbuffers::String *nav_mesh_file_path() const {
     return GetPointer<const flatbuffers::String *>(VT_NAV_MESH_FILE_PATH);
   }
+  const flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentItem>> *items() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentItem>> *>(VT_ITEMS);
+  }
+  const flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentGadget>> *gadgets() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentGadget>> *>(VT_GADGETS);
+  }
+  const flatbuffers::Vector<flatbuffers::Offset<GWIPC::Enemy>> *enemies() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::Enemy>> *>(VT_ENEMIES);
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyOffset(verifier, VT_CHARACTER) &&
@@ -1902,6 +2112,15 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            verifier.VerifyTable(dialogs_info()) &&
            VerifyOffset(verifier, VT_NAV_MESH_FILE_PATH) &&
            verifier.VerifyString(nav_mesh_file_path()) &&
+           VerifyOffset(verifier, VT_ITEMS) &&
+           verifier.VerifyVector(items()) &&
+           verifier.VerifyVectorOfTables(items()) &&
+           VerifyOffset(verifier, VT_GADGETS) &&
+           verifier.VerifyVector(gadgets()) &&
+           verifier.VerifyVectorOfTables(gadgets()) &&
+           VerifyOffset(verifier, VT_ENEMIES) &&
+           verifier.VerifyVector(enemies()) &&
+           verifier.VerifyVectorOfTables(enemies()) &&
            verifier.EndTable();
   }
 };
@@ -1937,6 +2156,15 @@ struct ClientDataBuilder {
   void add_nav_mesh_file_path(flatbuffers::Offset<flatbuffers::String> nav_mesh_file_path) {
     fbb_.AddOffset(ClientData::VT_NAV_MESH_FILE_PATH, nav_mesh_file_path);
   }
+  void add_items(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentItem>>> items) {
+    fbb_.AddOffset(ClientData::VT_ITEMS, items);
+  }
+  void add_gadgets(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentGadget>>> gadgets) {
+    fbb_.AddOffset(ClientData::VT_GADGETS, gadgets);
+  }
+  void add_enemies(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Enemy>>> enemies) {
+    fbb_.AddOffset(ClientData::VT_ENEMIES, enemies);
+  }
   explicit ClientDataBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -1958,8 +2186,14 @@ inline flatbuffers::Offset<ClientData> CreateClientData(
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Bag>>> bags = 0,
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::BagItem>>> items_equiped = 0,
     flatbuffers::Offset<GWIPC::DialogsInfo> dialogs_info = 0,
-    flatbuffers::Offset<flatbuffers::String> nav_mesh_file_path = 0) {
+    flatbuffers::Offset<flatbuffers::String> nav_mesh_file_path = 0,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentItem>>> items = 0,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentGadget>>> gadgets = 0,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Enemy>>> enemies = 0) {
   ClientDataBuilder builder_(_fbb);
+  builder_.add_enemies(enemies);
+  builder_.add_gadgets(gadgets);
+  builder_.add_items(items);
   builder_.add_nav_mesh_file_path(nav_mesh_file_path);
   builder_.add_dialogs_info(dialogs_info);
   builder_.add_items_equiped(items_equiped);
@@ -1982,11 +2216,17 @@ inline flatbuffers::Offset<ClientData> CreateClientDataDirect(
     const std::vector<flatbuffers::Offset<GWIPC::Bag>> *bags = nullptr,
     const std::vector<flatbuffers::Offset<GWIPC::BagItem>> *items_equiped = nullptr,
     flatbuffers::Offset<GWIPC::DialogsInfo> dialogs_info = 0,
-    const char *nav_mesh_file_path = nullptr) {
+    const char *nav_mesh_file_path = nullptr,
+    const std::vector<flatbuffers::Offset<GWIPC::AgentItem>> *items = nullptr,
+    const std::vector<flatbuffers::Offset<GWIPC::AgentGadget>> *gadgets = nullptr,
+    const std::vector<flatbuffers::Offset<GWIPC::Enemy>> *enemies = nullptr) {
   auto quests__ = quests ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::Quest>>(*quests) : 0;
   auto bags__ = bags ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::Bag>>(*bags) : 0;
   auto items_equiped__ = items_equiped ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::BagItem>>(*items_equiped) : 0;
   auto nav_mesh_file_path__ = nav_mesh_file_path ? _fbb.CreateString(nav_mesh_file_path) : 0;
+  auto items__ = items ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::AgentItem>>(*items) : 0;
+  auto gadgets__ = gadgets ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::AgentGadget>>(*gadgets) : 0;
+  auto enemies__ = enemies ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::Enemy>>(*enemies) : 0;
   return GWIPC::CreateClientData(
       _fbb,
       character,
@@ -1997,7 +2237,10 @@ inline flatbuffers::Offset<ClientData> CreateClientDataDirect(
       bags__,
       items_equiped__,
       dialogs_info,
-      nav_mesh_file_path__);
+      nav_mesh_file_path__,
+      items__,
+      gadgets__,
+      enemies__);
 }
 
 inline const GWIPC::ClientData *GetClientData(const void *buf) {

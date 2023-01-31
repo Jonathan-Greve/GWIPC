@@ -143,6 +143,7 @@ table Party {
   player_members:[AgentLiving];
   hero_members:[Hero];
   henchman_members:[AgentLiving];
+  extra_npc_members:[AgentLiving];
 
   flag_all_position:Vec3;
 
@@ -191,6 +192,23 @@ table DialogsInfo {
   last_dialog_agent_id:uint32;
 }
 
+table AgentItem {
+    agent:Agent;
+    owner_agent_id:uint32;
+    item_id:uint32;
+    extra_type:uint32;
+}
+
+table AgentGadget {
+    agent:Agent;
+    extra_type:uint32;
+    gadget_id:uint32;
+}
+
+table Enemy {
+    agent_living:AgentLiving;
+}
+
 table ClientData {
   character:Character;
   instance:Instance;
@@ -201,6 +219,9 @@ table ClientData {
   items_equiped:[BagItem];
   dialogs_info:DialogsInfo;
   nav_mesh_file_path:string;
+  items:[AgentItem];
+  gadgets:[AgentGadget];
+  enemies:[Enemy];
 }
 
 root_type ClientData;
