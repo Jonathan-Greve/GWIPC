@@ -201,6 +201,7 @@ table AgentItem {
 
 table AgentGadget {
     agent:Agent;
+    name:string;
     extra_type:uint32;
     gadget_id:uint32;
 }

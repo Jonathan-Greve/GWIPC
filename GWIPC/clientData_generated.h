@@ -1940,11 +1940,15 @@ struct AgentGadget FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef AgentGadgetBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_AGENT = 4,
-    VT_EXTRA_TYPE = 6,
-    VT_GADGET_ID = 8
+    VT_NAME = 6,
+    VT_EXTRA_TYPE = 8,
+    VT_GADGET_ID = 10
   };
   const GWIPC::Agent *agent() const {
     return GetStruct<const GWIPC::Agent *>(VT_AGENT);
+  }
+  const flatbuffers::String *name() const {
+    return GetPointer<const flatbuffers::String *>(VT_NAME);
   }
   uint32_t extra_type() const {
     return GetField<uint32_t>(VT_EXTRA_TYPE, 0);
@@ -1955,6 +1959,8 @@ struct AgentGadget FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<GWIPC::Agent>(verifier, VT_AGENT, 4) &&
+           VerifyOffset(verifier, VT_NAME) &&
+           verifier.VerifyString(name()) &&
            VerifyField<uint32_t>(verifier, VT_EXTRA_TYPE, 4) &&
            VerifyField<uint32_t>(verifier, VT_GADGET_ID, 4) &&
            verifier.EndTable();
@@ -1967,6 +1973,9 @@ struct AgentGadgetBuilder {
   flatbuffers::uoffset_t start_;
   void add_agent(const GWIPC::Agent *agent) {
     fbb_.AddStruct(AgentGadget::VT_AGENT, agent);
+  }
+  void add_name(flatbuffers::Offset<flatbuffers::String> name) {
+    fbb_.AddOffset(AgentGadget::VT_NAME, name);
   }
   void add_extra_type(uint32_t extra_type) {
     fbb_.AddElement<uint32_t>(AgentGadget::VT_EXTRA_TYPE, extra_type, 0);
@@ -1988,13 +1997,30 @@ struct AgentGadgetBuilder {
 inline flatbuffers::Offset<AgentGadget> CreateAgentGadget(
     flatbuffers::FlatBufferBuilder &_fbb,
     const GWIPC::Agent *agent = nullptr,
+    flatbuffers::Offset<flatbuffers::String> name = 0,
     uint32_t extra_type = 0,
     uint32_t gadget_id = 0) {
   AgentGadgetBuilder builder_(_fbb);
   builder_.add_gadget_id(gadget_id);
   builder_.add_extra_type(extra_type);
+  builder_.add_name(name);
   builder_.add_agent(agent);
   return builder_.Finish();
+}
+
+inline flatbuffers::Offset<AgentGadget> CreateAgentGadgetDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    const GWIPC::Agent *agent = nullptr,
+    const char *name = nullptr,
+    uint32_t extra_type = 0,
+    uint32_t gadget_id = 0) {
+  auto name__ = name ? _fbb.CreateString(name) : 0;
+  return GWIPC::CreateAgentGadget(
+      _fbb,
+      agent,
+      name__,
+      extra_type,
+      gadget_id);
 }
 
 struct Enemy FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
