@@ -157,7 +157,7 @@ table Instance {
 }
 
 
-table BagItem {
+table Item {
   item_id:uint32;
   name:string;
   single_item_name:string;
@@ -175,7 +175,7 @@ table BagItem {
 
 table Bag {
   bag_size:uint8;
-  items:[BagItem];
+  items:[Item];
 }
 
 table GWDialog {
@@ -195,8 +195,8 @@ table DialogsInfo {
 table AgentItem {
     agent:Agent;
     owner_agent_id:uint32;
-    item_id:uint32;
     extra_type:uint32;
+    item:Item;
 }
 
 table AgentGadget {
@@ -216,12 +216,15 @@ table ClientData {
   game_state:GameState;
   quests:[Quest];
   bags:[Bag];
-  items_equiped:[BagItem];
+  items_equiped:[Item];
   dialogs_info:DialogsInfo;
   nav_mesh_file_path:string;
   items:[AgentItem];
   gadgets:[AgentGadget];
   enemies:[Enemy];
+  unclaimed_items:Bag;
+  material_storage:Bag;
+  storage:[Bag];
 }
 
 root_type ClientData;
