@@ -19,8 +19,18 @@ table NavMeshTrapezoid{
     z_plane:uint32;
 }
 
+struct NavMeshDimensions {
+    min_x:float;
+    min_y:float;
+    min_z:float;
+    max_x:float;
+    max_y:float;
+    max_z:float;
+}
+
 table NavMesh {
     trapezoids:[NavMeshTrapezoid];
+    dimensions:NavMeshDimensions;
 }
 
 root_type NavMesh;

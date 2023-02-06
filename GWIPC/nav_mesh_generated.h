@@ -22,6 +22,8 @@ struct AdjacentTrapezoidIds;
 struct NavMeshTrapezoid;
 struct NavMeshTrapezoidBuilder;
 
+struct NavMeshDimensions;
+
 struct NavMesh;
 struct NavMeshBuilder;
 
@@ -59,6 +61,53 @@ FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) AdjacentTrapezoidIds FLATBUFFERS_FINAL_CL
   }
 };
 FLATBUFFERS_STRUCT_END(AdjacentTrapezoidIds, 16);
+
+FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) NavMeshDimensions FLATBUFFERS_FINAL_CLASS {
+ private:
+  float min_x_;
+  float min_y_;
+  float min_z_;
+  float max_x_;
+  float max_y_;
+  float max_z_;
+
+ public:
+  NavMeshDimensions()
+      : min_x_(0),
+        min_y_(0),
+        min_z_(0),
+        max_x_(0),
+        max_y_(0),
+        max_z_(0) {
+  }
+  NavMeshDimensions(float _min_x, float _min_y, float _min_z, float _max_x, float _max_y, float _max_z)
+      : min_x_(flatbuffers::EndianScalar(_min_x)),
+        min_y_(flatbuffers::EndianScalar(_min_y)),
+        min_z_(flatbuffers::EndianScalar(_min_z)),
+        max_x_(flatbuffers::EndianScalar(_max_x)),
+        max_y_(flatbuffers::EndianScalar(_max_y)),
+        max_z_(flatbuffers::EndianScalar(_max_z)) {
+  }
+  float min_x() const {
+    return flatbuffers::EndianScalar(min_x_);
+  }
+  float min_y() const {
+    return flatbuffers::EndianScalar(min_y_);
+  }
+  float min_z() const {
+    return flatbuffers::EndianScalar(min_z_);
+  }
+  float max_x() const {
+    return flatbuffers::EndianScalar(max_x_);
+  }
+  float max_y() const {
+    return flatbuffers::EndianScalar(max_y_);
+  }
+  float max_z() const {
+    return flatbuffers::EndianScalar(max_z_);
+  }
+};
+FLATBUFFERS_STRUCT_END(NavMeshDimensions, 24);
 
 struct NavMeshTrapezoid FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef NavMeshTrapezoidBuilder Builder;
@@ -164,16 +213,21 @@ inline flatbuffers::Offset<NavMeshTrapezoid> CreateNavMeshTrapezoid(
 struct NavMesh FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef NavMeshBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_TRAPEZOIDS = 4
+    VT_TRAPEZOIDS = 4,
+    VT_DIMENSIONS = 6
   };
   const flatbuffers::Vector<flatbuffers::Offset<GWIPC::NavMeshTrapezoid>> *trapezoids() const {
     return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::NavMeshTrapezoid>> *>(VT_TRAPEZOIDS);
+  }
+  const GWIPC::NavMeshDimensions *dimensions() const {
+    return GetStruct<const GWIPC::NavMeshDimensions *>(VT_DIMENSIONS);
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyOffset(verifier, VT_TRAPEZOIDS) &&
            verifier.VerifyVector(trapezoids()) &&
            verifier.VerifyVectorOfTables(trapezoids()) &&
+           VerifyField<GWIPC::NavMeshDimensions>(verifier, VT_DIMENSIONS, 4) &&
            verifier.EndTable();
   }
 };
@@ -184,6 +238,9 @@ struct NavMeshBuilder {
   flatbuffers::uoffset_t start_;
   void add_trapezoids(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::NavMeshTrapezoid>>> trapezoids) {
     fbb_.AddOffset(NavMesh::VT_TRAPEZOIDS, trapezoids);
+  }
+  void add_dimensions(const GWIPC::NavMeshDimensions *dimensions) {
+    fbb_.AddStruct(NavMesh::VT_DIMENSIONS, dimensions);
   }
   explicit NavMeshBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -198,19 +255,23 @@ struct NavMeshBuilder {
 
 inline flatbuffers::Offset<NavMesh> CreateNavMesh(
     flatbuffers::FlatBufferBuilder &_fbb,
-    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::NavMeshTrapezoid>>> trapezoids = 0) {
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::NavMeshTrapezoid>>> trapezoids = 0,
+    const GWIPC::NavMeshDimensions *dimensions = nullptr) {
   NavMeshBuilder builder_(_fbb);
+  builder_.add_dimensions(dimensions);
   builder_.add_trapezoids(trapezoids);
   return builder_.Finish();
 }
 
 inline flatbuffers::Offset<NavMesh> CreateNavMeshDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
-    const std::vector<flatbuffers::Offset<GWIPC::NavMeshTrapezoid>> *trapezoids = nullptr) {
+    const std::vector<flatbuffers::Offset<GWIPC::NavMeshTrapezoid>> *trapezoids = nullptr,
+    const GWIPC::NavMeshDimensions *dimensions = nullptr) {
   auto trapezoids__ = trapezoids ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::NavMeshTrapezoid>>(*trapezoids) : 0;
   return GWIPC::CreateNavMesh(
       _fbb,
-      trapezoids__);
+      trapezoids__,
+      dimensions);
 }
 
 inline const GWIPC::NavMesh *GetNavMesh(const void *buf) {
