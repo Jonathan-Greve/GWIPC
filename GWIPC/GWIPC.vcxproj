@@ -158,6 +158,7 @@
   <ItemGroup>
     <None Include="clientData.fbs" />
     <None Include="connections.fbs" />
+    <None Include="terrain_grid_mesh.fbs" />
     <None Include="update_options.fbs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,0 +1,10 @@
+include "clientData.fbs";
+
+namespace GWIPC;
+
+table TerrainGridMesh {
+    vertices:[GamePos];
+    indices:[uint32]
+}
+
+root_type NavMesh;
