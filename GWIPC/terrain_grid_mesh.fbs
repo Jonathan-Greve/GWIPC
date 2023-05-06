@@ -2,9 +2,9 @@ include "clientData.fbs";
 
 namespace GWIPC;
 
-table TerrainGridMesh {
+table TerrainMesh {
     vertices:[GamePos];
     indices:[uint32]
 }
 
-root_type NavMesh;
+root_type TerrainMesh;
