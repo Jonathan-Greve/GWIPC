@@ -1368,13 +1368,17 @@ struct Instance FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_INSTANCE_ID = 4,
     VT_MAP_ID = 6,
-    VT_MAP_INSTANCE_TYPE = 8
+    VT_FILE_HASH = 8,
+    VT_MAP_INSTANCE_TYPE = 10
   };
   uint32_t instance_id() const {
     return GetField<uint32_t>(VT_INSTANCE_ID, 0);
   }
   uint32_t map_id() const {
     return GetField<uint32_t>(VT_MAP_ID, 0);
+  }
+  uint32_t file_hash() const {
+    return GetField<uint32_t>(VT_FILE_HASH, 0);
   }
   GWIPC::MapInstanceType map_instance_type() const {
     return static_cast<GWIPC::MapInstanceType>(GetField<int8_t>(VT_MAP_INSTANCE_TYPE, 0));
@@ -1383,6 +1387,7 @@ struct Instance FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     return VerifyTableStart(verifier) &&
            VerifyField<uint32_t>(verifier, VT_INSTANCE_ID, 4) &&
            VerifyField<uint32_t>(verifier, VT_MAP_ID, 4) &&
+           VerifyField<uint32_t>(verifier, VT_FILE_HASH, 4) &&
            VerifyField<int8_t>(verifier, VT_MAP_INSTANCE_TYPE, 1) &&
            verifier.EndTable();
   }
@@ -1397,6 +1402,9 @@ struct InstanceBuilder {
   }
   void add_map_id(uint32_t map_id) {
     fbb_.AddElement<uint32_t>(Instance::VT_MAP_ID, map_id, 0);
+  }
+  void add_file_hash(uint32_t file_hash) {
+    fbb_.AddElement<uint32_t>(Instance::VT_FILE_HASH, file_hash, 0);
   }
   void add_map_instance_type(GWIPC::MapInstanceType map_instance_type) {
     fbb_.AddElement<int8_t>(Instance::VT_MAP_INSTANCE_TYPE, static_cast<int8_t>(map_instance_type), 0);
@@ -1416,8 +1424,10 @@ inline flatbuffers::Offset<Instance> CreateInstance(
     flatbuffers::FlatBufferBuilder &_fbb,
     uint32_t instance_id = 0,
     uint32_t map_id = 0,
+    uint32_t file_hash = 0,
     GWIPC::MapInstanceType map_instance_type = GWIPC::MapInstanceType_Outpost) {
   InstanceBuilder builder_(_fbb);
+  builder_.add_file_hash(file_hash);
   builder_.add_map_id(map_id);
   builder_.add_instance_id(instance_id);
   builder_.add_map_instance_type(map_instance_type);

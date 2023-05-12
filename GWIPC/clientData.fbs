@@ -153,6 +153,7 @@ table Party {
 table Instance {
   instance_id:uint32;
   map_id:uint32;
+  file_hash:uint32;
   map_instance_type:MapInstanceType;
 }
 
