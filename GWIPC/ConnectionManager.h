@@ -88,6 +88,33 @@ public:
         CloseHandle(event_);
     }
 
+    // Used by the Replayer.h
+    void clear_all_connections()
+    {
+        std::vector<std::string> empty;
+        write_connections_to_sm(empty);
+
+        SetEvent(event_);
+    }
+
+    // Used by the Replayer.h
+    void connect_multiple(const std::vector<std::string>& connection_ids)
+    {
+        auto curr_connection_ids = get_connections_ids();
+        for (const auto& connection_id : connection_ids)
+        {
+            const auto it = std::find(curr_connection_ids.begin(), curr_connection_ids.end(), connection_id);
+            if (it == curr_connection_ids.end())
+            {
+                curr_connection_ids.push_back(connection_id);
+            }
+        }
+
+        write_connections_to_sm(curr_connection_ids);
+
+        SetEvent(event_);
+    }
+
     HANDLE get_event_handle() { return event_; }
     HANDLE get_mutex_handle() { return shared_memory_.get_mutex_handle(); }
 

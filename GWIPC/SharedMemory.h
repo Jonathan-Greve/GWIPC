@@ -49,7 +49,7 @@ public:
 
     void terminate() { }
 
-    void write_data(uint8_t* new_data, uint32_t new_data_size)
+    void write_data(const uint8_t* new_data, uint32_t new_data_size)
     {
         DataInfo data_info(new_data_size);
         WaitForSingleObject(mutex_, INFINITE);
