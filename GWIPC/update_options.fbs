@@ -4,6 +4,7 @@ table UpdateOptions {
     only_send_active_quest_description:bool;
     only_send_active_quest_objectives:bool;
     should_update_client_data:bool;
+    should_render:bool;
 }
 
 root_type UpdateOptions;

@@ -36,16 +36,16 @@ public:
         return nullptr;
     }
 
-    void update(bool only_send_active_quest_description, bool only_send_active_quest_objectives, bool should_update_client_data)
+    void update(bool only_send_active_quest_description, bool only_send_active_quest_objectives,
+                bool should_update_client_data, bool should_render)
     {
 
         // Build flatbuffer
         flatbuffers::FlatBufferBuilder builder(shared_memory_.get_sm_size());
 
-        auto options_flatbuf = GWIPC::CreateUpdateOptions(builder,
-            only_send_active_quest_description,
-            only_send_active_quest_objectives,
-            should_update_client_data);
+        auto options_flatbuf = GWIPC::CreateUpdateOptions(builder, only_send_active_quest_description,
+                                                          only_send_active_quest_objectives,
+                                                          should_update_client_data, should_render);
 
         builder.Finish(options_flatbuf);
 
@@ -54,7 +54,6 @@ public:
         int size = builder.GetSize();
         shared_memory_.write_data(buf, size);
     }
-
 
     void terminate() { shared_memory_.terminate(); }
 

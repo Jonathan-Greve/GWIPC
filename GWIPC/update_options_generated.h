@@ -23,7 +23,8 @@ struct UpdateOptions FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_ONLY_SEND_ACTIVE_QUEST_DESCRIPTION = 4,
     VT_ONLY_SEND_ACTIVE_QUEST_OBJECTIVES = 6,
-    VT_SHOULD_UPDATE_CLIENT_DATA = 8
+    VT_SHOULD_UPDATE_CLIENT_DATA = 8,
+    VT_SHOULD_RENDER = 10
   };
   bool only_send_active_quest_description() const {
     return GetField<uint8_t>(VT_ONLY_SEND_ACTIVE_QUEST_DESCRIPTION, 0) != 0;
@@ -34,11 +35,15 @@ struct UpdateOptions FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   bool should_update_client_data() const {
     return GetField<uint8_t>(VT_SHOULD_UPDATE_CLIENT_DATA, 0) != 0;
   }
+  bool should_render() const {
+    return GetField<uint8_t>(VT_SHOULD_RENDER, 0) != 0;
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint8_t>(verifier, VT_ONLY_SEND_ACTIVE_QUEST_DESCRIPTION, 1) &&
            VerifyField<uint8_t>(verifier, VT_ONLY_SEND_ACTIVE_QUEST_OBJECTIVES, 1) &&
            VerifyField<uint8_t>(verifier, VT_SHOULD_UPDATE_CLIENT_DATA, 1) &&
+           VerifyField<uint8_t>(verifier, VT_SHOULD_RENDER, 1) &&
            verifier.EndTable();
   }
 };
@@ -56,6 +61,9 @@ struct UpdateOptionsBuilder {
   void add_should_update_client_data(bool should_update_client_data) {
     fbb_.AddElement<uint8_t>(UpdateOptions::VT_SHOULD_UPDATE_CLIENT_DATA, static_cast<uint8_t>(should_update_client_data), 0);
   }
+  void add_should_render(bool should_render) {
+    fbb_.AddElement<uint8_t>(UpdateOptions::VT_SHOULD_RENDER, static_cast<uint8_t>(should_render), 0);
+  }
   explicit UpdateOptionsBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -71,8 +79,10 @@ inline flatbuffers::Offset<UpdateOptions> CreateUpdateOptions(
     flatbuffers::FlatBufferBuilder &_fbb,
     bool only_send_active_quest_description = false,
     bool only_send_active_quest_objectives = false,
-    bool should_update_client_data = false) {
+    bool should_update_client_data = false,
+    bool should_render = false) {
   UpdateOptionsBuilder builder_(_fbb);
+  builder_.add_should_render(should_render);
   builder_.add_should_update_client_data(should_update_client_data);
   builder_.add_only_send_active_quest_objectives(only_send_active_quest_objectives);
   builder_.add_only_send_active_quest_description(only_send_active_quest_description);
