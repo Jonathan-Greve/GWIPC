@@ -75,8 +75,5 @@
     <None Include="update_options.fbs">
       <Filter>Flatbuffer schemes</Filter>
     </None>
-    <None Include="terrain_grid_mesh.fbs">
-      <Filter>Flatbuffer schemes</Filter>
-    </None>
   </ItemGroup>
 </Project>
