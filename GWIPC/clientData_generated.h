@@ -2092,7 +2092,8 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_ENEMIES = 26,
     VT_UNCLAIMED_ITEMS = 28,
     VT_MATERIAL_STORAGE = 30,
-    VT_STORAGE = 32
+    VT_STORAGE = 32,
+    VT_NPCS = 34
   };
   const GWIPC::Character *character() const {
     return GetPointer<const GWIPC::Character *>(VT_CHARACTER);
@@ -2139,6 +2140,9 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const flatbuffers::Vector<flatbuffers::Offset<GWIPC::Bag>> *storage() const {
     return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::Bag>> *>(VT_STORAGE);
   }
+  const flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentLiving>> *npcs() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentLiving>> *>(VT_NPCS);
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyOffset(verifier, VT_CHARACTER) &&
@@ -2177,6 +2181,9 @@ struct ClientData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyOffset(verifier, VT_STORAGE) &&
            verifier.VerifyVector(storage()) &&
            verifier.VerifyVectorOfTables(storage()) &&
+           VerifyOffset(verifier, VT_NPCS) &&
+           verifier.VerifyVector(npcs()) &&
+           verifier.VerifyVectorOfTables(npcs()) &&
            verifier.EndTable();
   }
 };
@@ -2230,6 +2237,9 @@ struct ClientDataBuilder {
   void add_storage(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Bag>>> storage) {
     fbb_.AddOffset(ClientData::VT_STORAGE, storage);
   }
+  void add_npcs(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentLiving>>> npcs) {
+    fbb_.AddOffset(ClientData::VT_NPCS, npcs);
+  }
   explicit ClientDataBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -2257,8 +2267,10 @@ inline flatbuffers::Offset<ClientData> CreateClientData(
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Enemy>>> enemies = 0,
     flatbuffers::Offset<GWIPC::Bag> unclaimed_items = 0,
     flatbuffers::Offset<GWIPC::Bag> material_storage = 0,
-    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Bag>>> storage = 0) {
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::Bag>>> storage = 0,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<GWIPC::AgentLiving>>> npcs = 0) {
   ClientDataBuilder builder_(_fbb);
+  builder_.add_npcs(npcs);
   builder_.add_storage(storage);
   builder_.add_material_storage(material_storage);
   builder_.add_unclaimed_items(unclaimed_items);
@@ -2293,7 +2305,8 @@ inline flatbuffers::Offset<ClientData> CreateClientDataDirect(
     const std::vector<flatbuffers::Offset<GWIPC::Enemy>> *enemies = nullptr,
     flatbuffers::Offset<GWIPC::Bag> unclaimed_items = 0,
     flatbuffers::Offset<GWIPC::Bag> material_storage = 0,
-    const std::vector<flatbuffers::Offset<GWIPC::Bag>> *storage = nullptr) {
+    const std::vector<flatbuffers::Offset<GWIPC::Bag>> *storage = nullptr,
+    const std::vector<flatbuffers::Offset<GWIPC::AgentLiving>> *npcs = nullptr) {
   auto quests__ = quests ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::Quest>>(*quests) : 0;
   auto bags__ = bags ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::Bag>>(*bags) : 0;
   auto items_equiped__ = items_equiped ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::Item>>(*items_equiped) : 0;
@@ -2302,6 +2315,7 @@ inline flatbuffers::Offset<ClientData> CreateClientDataDirect(
   auto gadgets__ = gadgets ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::AgentGadget>>(*gadgets) : 0;
   auto enemies__ = enemies ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::Enemy>>(*enemies) : 0;
   auto storage__ = storage ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::Bag>>(*storage) : 0;
+  auto npcs__ = npcs ? _fbb.CreateVector<flatbuffers::Offset<GWIPC::AgentLiving>>(*npcs) : 0;
   return GWIPC::CreateClientData(
       _fbb,
       character,
@@ -2318,7 +2332,8 @@ inline flatbuffers::Offset<ClientData> CreateClientDataDirect(
       enemies__,
       unclaimed_items,
       material_storage,
-      storage__);
+      storage__,
+      npcs__);
 }
 
 inline const GWIPC::ClientData *GetClientData(const void *buf) {

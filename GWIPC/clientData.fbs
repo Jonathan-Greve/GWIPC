@@ -227,6 +227,7 @@ table ClientData {
   unclaimed_items:Bag;
   material_storage:Bag;
   storage:[Bag];
+  npcs:[AgentLiving];
 }
 
 root_type ClientData;
