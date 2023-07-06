@@ -1,0 +1,11 @@
+namespace GWIPC;
+
+table ControlStates {
+    camera_yaw_angle:float; // represents the camera angle
+    strafe_left:bool; // true if the character is currently strafing left
+    strafe_right:bool; // true if the character is currently strafing right
+    move_forward:bool; // true if the character is currently running forward
+    move_backwards:bool; // true if the character is currently moving backwards
+}
+
+root_type ControlStates;

@@ -1,23 +1,23 @@
 #pragma once
 #include "SharedMemory.h"
 #include "SharedMemoryLock.h"
-#include "update_options_generated.h"
+#include "control_states_generated.h"
 #include <vector>
 #include <algorithm>
 
 namespace GWIPC
 {
-class UpdateOptionsManager
+class ControlStatesManager
 {
 public:
-    UpdateOptionsManager(const std::string& connection_id)
+    ControlStatesManager(const std::string& connection_id)
         : connection_id_(connection_id)
         , read_buf_(std::vector<uint8_t>(64))
         , shared_memory_(std::format("{}:update_options", connection_id), 1024)
     {
     }
 
-    const GWIPC::UpdateOptions* get_update_options()
+    const GWIPC::ControlStates* get_control_states()
     {
         auto sm_data = shared_memory_.get_data();
         if (sm_data)
@@ -28,27 +28,25 @@ public:
                 memcpy(read_buf_.data(), sm_data, data_info->data_size);
             }
 
-            auto update_options = GWIPC::GetUpdateOptions(read_buf_.data());
+            auto control_states = GWIPC::GetControlStates(read_buf_.data());
 
-            return update_options;
+            return control_states;
         }
 
         return nullptr;
     }
 
-    void update(bool only_send_active_quest_description = true, bool only_send_active_quest_objectives = true,
-                bool should_update_client_data = true, bool should_render = true,
-                bool should_ignore_keyboard_input = false, bool should_mouse_keyboard_input = false)
+    void update(float camera_yaw_angle = 0, bool strafe_left = false, bool strafe_right = false,
+                bool move_forward = false, bool move_backwards = false)
     {
 
         // Build flatbuffer
         flatbuffers::FlatBufferBuilder builder(shared_memory_.get_sm_size());
 
-        auto options_flatbuf = GWIPC::CreateUpdateOptions(builder, only_send_active_quest_description,
-                                                          only_send_active_quest_objectives,
-                                                          should_update_client_data, should_render);
+        auto control_states_flatbuf = GWIPC::CreateControlStates(builder, camera_yaw_angle, strafe_left,
+                                                                 strafe_right, move_forward, move_backwards);
 
-        builder.Finish(options_flatbuf);
+        builder.Finish(control_states_flatbuf);
 
         // Copy and overwrite shared memory.
         uint8_t* buf = builder.GetBufferPointer();

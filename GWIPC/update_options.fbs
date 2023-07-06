@@ -5,6 +5,8 @@ table UpdateOptions {
     only_send_active_quest_objectives:bool;
     should_update_client_data:bool;
     should_render:bool;
+    ignore_keyboard_input:bool;
+    ignore_mouse_input:bool;
 }
 
 root_type UpdateOptions;

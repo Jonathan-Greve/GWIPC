@@ -24,7 +24,9 @@ struct UpdateOptions FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_ONLY_SEND_ACTIVE_QUEST_DESCRIPTION = 4,
     VT_ONLY_SEND_ACTIVE_QUEST_OBJECTIVES = 6,
     VT_SHOULD_UPDATE_CLIENT_DATA = 8,
-    VT_SHOULD_RENDER = 10
+    VT_SHOULD_RENDER = 10,
+    VT_IGNORE_KEYBOARD_INPUT = 12,
+    VT_IGNORE_MOUSE_INPUT = 14
   };
   bool only_send_active_quest_description() const {
     return GetField<uint8_t>(VT_ONLY_SEND_ACTIVE_QUEST_DESCRIPTION, 0) != 0;
@@ -38,12 +40,20 @@ struct UpdateOptions FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   bool should_render() const {
     return GetField<uint8_t>(VT_SHOULD_RENDER, 0) != 0;
   }
+  bool ignore_keyboard_input() const {
+    return GetField<uint8_t>(VT_IGNORE_KEYBOARD_INPUT, 0) != 0;
+  }
+  bool ignore_mouse_input() const {
+    return GetField<uint8_t>(VT_IGNORE_MOUSE_INPUT, 0) != 0;
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint8_t>(verifier, VT_ONLY_SEND_ACTIVE_QUEST_DESCRIPTION, 1) &&
            VerifyField<uint8_t>(verifier, VT_ONLY_SEND_ACTIVE_QUEST_OBJECTIVES, 1) &&
            VerifyField<uint8_t>(verifier, VT_SHOULD_UPDATE_CLIENT_DATA, 1) &&
            VerifyField<uint8_t>(verifier, VT_SHOULD_RENDER, 1) &&
+           VerifyField<uint8_t>(verifier, VT_IGNORE_KEYBOARD_INPUT, 1) &&
+           VerifyField<uint8_t>(verifier, VT_IGNORE_MOUSE_INPUT, 1) &&
            verifier.EndTable();
   }
 };
@@ -64,6 +74,12 @@ struct UpdateOptionsBuilder {
   void add_should_render(bool should_render) {
     fbb_.AddElement<uint8_t>(UpdateOptions::VT_SHOULD_RENDER, static_cast<uint8_t>(should_render), 0);
   }
+  void add_ignore_keyboard_input(bool ignore_keyboard_input) {
+    fbb_.AddElement<uint8_t>(UpdateOptions::VT_IGNORE_KEYBOARD_INPUT, static_cast<uint8_t>(ignore_keyboard_input), 0);
+  }
+  void add_ignore_mouse_input(bool ignore_mouse_input) {
+    fbb_.AddElement<uint8_t>(UpdateOptions::VT_IGNORE_MOUSE_INPUT, static_cast<uint8_t>(ignore_mouse_input), 0);
+  }
   explicit UpdateOptionsBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -80,8 +96,12 @@ inline flatbuffers::Offset<UpdateOptions> CreateUpdateOptions(
     bool only_send_active_quest_description = false,
     bool only_send_active_quest_objectives = false,
     bool should_update_client_data = false,
-    bool should_render = false) {
+    bool should_render = false,
+    bool ignore_keyboard_input = false,
+    bool ignore_mouse_input = false) {
   UpdateOptionsBuilder builder_(_fbb);
+  builder_.add_ignore_mouse_input(ignore_mouse_input);
+  builder_.add_ignore_keyboard_input(ignore_keyboard_input);
   builder_.add_should_render(should_render);
   builder_.add_should_update_client_data(should_update_client_data);
   builder_.add_only_send_active_quest_objectives(only_send_active_quest_objectives);

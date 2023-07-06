@@ -34,6 +34,9 @@
     <ClCompile Include="UpdateOptionsManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ControlStatesManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SharedMemory.h">
@@ -64,6 +67,12 @@
     <ClInclude Include="nav_mesh_generated.h">
       <Filter>Generated flatbuffer files</Filter>
     </ClInclude>
+    <ClInclude Include="control_states_generated.h">
+      <Filter>Generated flatbuffer files</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlStatesManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="connections.fbs">
@@ -73,6 +82,9 @@
       <Filter>Flatbuffer schemes</Filter>
     </None>
     <None Include="update_options.fbs">
+      <Filter>Flatbuffer schemes</Filter>
+    </None>
+    <None Include="control_states.fbs">
       <Filter>Flatbuffer schemes</Filter>
     </None>
   </ItemGroup>
